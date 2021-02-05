@@ -20,6 +20,8 @@ vcpkg.exe install ^
 	nlohmann-json:x64-windows ^
 	gtest:x64-windows ^
 	glm:x64-windows ^
+	volk:x64-windows ^
+	vulkan-hpp:x64-windows ^
 	--clean-after-build
 
 rem The buildtrees folder holds a *lot* of data, and can safely be removed while keeping the installed libraries intact
