@@ -20,6 +20,7 @@ vcpkg.exe install ^
 	nlohmann-json:x64-windows ^
 	gtest:x64-windows ^
 	glm:x64-windows ^
+	glfw3:x64-windows ^
 	volk:x64-windows ^
 	vulkan-hpp:x64-windows ^
 	--clean-after-build
