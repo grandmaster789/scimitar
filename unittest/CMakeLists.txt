@@ -9,12 +9,10 @@ add_executable(${UNIT_TEST}
 )
 
 find_package(GTest CONFIG REQUIRED)
-find_package(glm CONFIG REQUIRED)
 
 include_directories(../scimitar)
 
 target_link_libraries(${UNIT_TEST} PRIVATE
-	glm
 	GTest::gtest
 	GTest::gtest_main
 	GTest::gmock

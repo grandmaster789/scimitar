@@ -17,14 +17,15 @@ cd vcpkg.windows
 if not exist vcpkg.exe call bootstrap-vcpkg.bat || goto error
 
 vcpkg.exe install ^
-	nlohmann-json:x64-windows ^
 	gtest:x64-windows ^
-	glm:x64-windows ^
 	glfw3:x64-windows ^
+	ms-gsl:x64-windows ^
+	nlohmann-json:x64-windows ^
+	tinyobjloader:x64-windows ^
 	volk:x64-windows ^
-	vulkan-hpp:x64-windows ^
 	--clean-after-build
 
+rem NOTE you'll need to install the Vulkan SDK separately, I did not find a way to use vcpkg for that...
 rem The buildtrees folder holds a *lot* of data, and can safely be removed while keeping the installed libraries intact
 
 if exist buildtrees rd buildtrees /s /q

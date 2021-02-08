@@ -1,6 +1,6 @@
 cmake_minimum_required (VERSION 3.16) # some of the dependencies have much more strict requirements
 
-set(SCIMITAR_APP "scimitar_application")
+set(SCIMITAR_APP "scimitar")
 
 project(${SCIMITAR_APP} LANGUAGES CXX)
 
@@ -11,11 +11,8 @@ add_executable(
 
 include_directories(../scimitar)
 
-find_package(glm CONFIG REQUIRED)
-
 target_link_libraries(${SCIMITAR_APP} PRIVATE
-	scimitar
-	glm
+	scimitar_lib
 )
 
 target_include_directories(${SCIMITAR_APP} PRIVATE
