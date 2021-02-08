@@ -20,7 +20,10 @@ add_library(${SCIMITAR_LIB} STATIC
 	"dependencies.h" 
 	"dependencies.cpp"
 	"preprocessor.h" 
-)
+	"util/typemap.h" 
+	"app/application.h" 
+	"app/application.cpp"
+ "renderer/renderer.h" "renderer/renderer.cpp")
 
 # vcpkg dependencies
 find_package(nlohmann_json CONFIG REQUIRED)
@@ -28,6 +31,7 @@ find_package(volk CONFIG REQUIRED)
 find_package(glfw3 CONFIG REQUIRED)
 find_package(tinyobjloader REQUIRED)
 find_package(Microsoft.GSL CONFIG REQUIRED)
+find_package(unofficial-concurrentqueue CONFIG REQUIRED)
 find_path(VULKAN_HPP_INCLUDE_DIRS "vulkan/vulkan.hpp")
 
 # vulkan and shaderc are part of the Vulkan SDK 
@@ -48,7 +52,8 @@ PUBLIC
 
 PRIVATE
 	nlohmann_json
-	nlohmann_json::nlohmann_json	
+	nlohmann_json::nlohmann_json
+	unofficial::concurrentqueue::concurrentqueue
 	volk::volk
 	volk::volk_headers
 )

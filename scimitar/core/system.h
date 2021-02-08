@@ -5,8 +5,13 @@
 #include <string_view>
 #include <functional>
 #include <iostream>
+#include <type_traits>
 
 #include "../dependencies.h"
+
+namespace scimitar::app {
+	class Application;
+}
 
 namespace scimitar::core {
 	class System {
@@ -33,14 +38,14 @@ namespace scimitar::core {
 		System             (System&&) noexcept = default;
 		System& operator = (System&&) noexcept = default;
 
-		virtual void start();
+		virtual void init();
 		virtual void update();
-		virtual void stop();
+		virtual void shutdown(); // prepare for cleanup - finalize settings to be serialized etc
 
-		std::string_view getName() const;
+		const std::string& get_name() const;
 
-		const Dependencies& getDependencies() const;
-		const Settings&     getSettings()     const;
+		const Dependencies& get_dependencies() const;
+		const Settings&     get_settings()     const;
 
 		friend std::ostream& operator << (std::ostream& os, const System& s);
 
@@ -49,8 +54,8 @@ namespace scimitar::core {
 
 		template <typename T>
 		void register_setting(
-			std::string_view json_key, 
-			T*               member_variable
+			const std::string& json_key, 
+			T*                 member_variable
 		);
 
 		class Engine* m_Engine = nullptr;
@@ -60,6 +65,11 @@ namespace scimitar::core {
 		Dependencies m_Dependencies;
 		Settings     m_Settings;
 	};
+
+	template <typename T>
+	concept cSystem = 
+		 std::derived_from<T, System> &&
+		!std::derived_from<T, app::Application>;
 }
 
 #include "system.inl"

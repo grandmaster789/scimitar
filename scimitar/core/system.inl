@@ -5,8 +5,8 @@
 namespace scimitar::core {
 	template <typename T>
 	void System::register_setting(
-		std::string_view json_key,
-		T*               member_variable
+		const std::string& json_key,
+		T*                 member_variable
 	) {
 		JsonProperties entry;
 
@@ -25,7 +25,7 @@ namespace scimitar::core {
 			if (it != parsed_json.end())
 				*member_variable = *it;
 			else
-				std::cout << getName() << ": setting " << json_key << " was not found\n";
+				std::cout << get_name() << ": setting " << json_key << " was not found\n";
 		};
 
 		m_Settings.push_back(std::move(entry));

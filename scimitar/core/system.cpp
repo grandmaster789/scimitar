@@ -2,29 +2,31 @@
 #include "../util/algorithm.h"
 
 namespace scimitar::core {
-	System::System(const std::string& unique_system_name) {
+	System::System(const std::string& unique_system_name):
+		m_Name(unique_system_name)
+	{
 	}
 	
-	void System::start() {
-		std::cout << "Starting " << getName() << "\n";
+	void System::init() {
+		std::cout << "Starting " << get_name() << "\n";
 	}
 
 	void System::update() {
 	}
 
-	void System::stop() {
-		std::cout << "Stopped " << getName() << "\n";
+	void System::shutdown() {
+		std::cout << "Stopped " << get_name() << "\n";
 	}
 
-	std::string_view System::getName() const {
+	const std::string& System::get_name() const {
 		return m_Name;
 	}
 
-	const System::Dependencies& System::getDependencies() const {
+	const System::Dependencies& System::get_dependencies() const {
 		return m_Dependencies;
 	}
 
-	const System::Settings& System::getSettings() const {
+	const System::Settings& System::get_settings() const {
 		return m_Settings;
 	}
 
@@ -36,6 +38,7 @@ namespace scimitar::core {
 	}
 
 	std::ostream& operator << (std::ostream& os, const System& s) {
+		os << s.get_name() << "\n";
 		return os;
 	}
 }

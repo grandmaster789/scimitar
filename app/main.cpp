@@ -3,22 +3,41 @@
 #include <thread>
 
 #include <scimitar.h>
-#include <vulkan/vulkan.hpp>
 
-#include <deque>
+class TestApp :
+	public scimitar::app::Application
+{
+public:
+	TestApp() :
+		Application("Scimitar test application")
+	{
+		register_setting("counter", &m_Counter);
+	}
+
+	void init() override {
+	}
+
+	void update() override {
+		if (++m_Counter > 1000)
+			m_Engine->stop();
+
+		std::cout << ".";
+	}
+
+	void shutdown() override {
+		m_Counter = 0; // because this is persisted via settings we need to reset it during the 'cleanup' phase
+	}
+
+	int m_Counter = 0;
+};
 
 int main() {
 	std::cout << "Launching application\n";
 
 	{
 		auto& engine = scimitar::core::Engine::instance();
-		auto window = engine.createWindow();
-
-		std::deque<std::unique_ptr<int>> x;
-		x.push_back(std::make_unique<int>(6));
-
-		auto local = scimitar::util::create_non_owning_copy(x);
-
+		
+		engine.set_application<TestApp>();
 		engine.start();
 	}
 	

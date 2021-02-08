@@ -17,6 +17,7 @@ cd vcpkg.windows
 if not exist vcpkg.exe call bootstrap-vcpkg.bat || goto error
 
 vcpkg.exe install ^
+	concurrentqueue:x64-windows ^
 	gtest:x64-windows ^
 	glfw3:x64-windows ^
 	ms-gsl:x64-windows ^
