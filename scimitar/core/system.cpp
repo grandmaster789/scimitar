@@ -8,14 +8,14 @@ namespace scimitar::core {
 	}
 	
 	void System::init() {
-		std::cout << "Starting " << get_name() << "\n";
+		std::cout << "Starting subsystem " << get_name() << "\n";
 	}
 
 	void System::update() {
 	}
 
 	void System::shutdown() {
-		std::cout << "Stopped " << get_name() << "\n";
+		std::cout << "Stopped subsystem " << get_name() << "\n";
 	}
 
 	const std::string& System::get_name() const {

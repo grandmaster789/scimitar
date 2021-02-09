@@ -54,10 +54,10 @@ namespace scimitar::util {
 		) != std::end(c);
 	}
 
-	template <typename tContainer>
+	template <typename C>
 	bool contains_all_of(
-		const tContainer& a,
-		const tContainer& b
+		const C& a,
+		const C& b
 	) {
 		for (const auto& value : b)
 			if (!contains(a, value))
@@ -66,10 +66,10 @@ namespace scimitar::util {
 		return true;
 	}
 
-	template <typename tContainer, typename tElement>
-	typename tContainer::const_iterator find(
-		const tContainer& c,
-		const tElement& value
+	template <typename C, typename E>
+	typename C::const_iterator find(
+		const C& c,
+		const E& value
 	) {
 		return std::find(
 			std::begin(c),
@@ -78,10 +78,10 @@ namespace scimitar::util {
 		);
 	}
 
-	template <typename tContainer, typename tPredicate>
-	typename tContainer::const_iterator find_if(
-		const tContainer& c,
-		tPredicate  pred
+	template <typename C, typename Pred>
+	typename C::const_iterator find_if(
+		const C& c,
+		Pred     pred
 	) {
 		return std::find_if(
 			std::begin(c),
@@ -90,16 +90,16 @@ namespace scimitar::util {
 		);
 	}
 
-	template <typename tContainer>
-	void sort(tContainer& c) {
+	template <typename C>
+	void sort(C& c) {
 		std::sort(
 			std::begin(c), 
 			std::end(c)
 		);
 	}
 
-	template <typename tContainer>
-	void uniquify(tContainer& c) {
+	template <typename C>
+	void uniquify(C& c) {
 		sort(c);
 
 		auto it = std::unique(

@@ -12,16 +12,15 @@ public:
 		Application("Scimitar test application")
 	{
 		register_setting("counter", &m_Counter);
+
+		add_dependency("OS");
+		add_dependency("Renderer");
 	}
 
 	void init() override {
 	}
 
 	void update() override {
-		if (++m_Counter > 1000)
-			m_Engine->stop();
-
-		std::cout << ".";
 	}
 
 	void shutdown() override {

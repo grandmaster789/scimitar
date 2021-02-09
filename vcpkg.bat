@@ -23,7 +23,6 @@ vcpkg.exe install ^
 	ms-gsl:x64-windows ^
 	nlohmann-json:x64-windows ^
 	tinyobjloader:x64-windows ^
-	volk:x64-windows ^
 	--clean-after-build
 
 rem NOTE you'll need to install the Vulkan SDK separately, I did not find a way to use vcpkg for that...

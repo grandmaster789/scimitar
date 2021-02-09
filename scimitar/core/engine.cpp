@@ -1,6 +1,7 @@
 #include "engine.h"
 #include "../util/algorithm.h"
 #include "../renderer/renderer.h"
+#include "../os/os.h"
 #include "../dependencies.h"
 
 #include <stdexcept>
@@ -29,6 +30,7 @@ namespace {
 namespace scimitar::core {
 	Engine::Engine() {
 		add<Renderer>();
+		add<OS>();
 	}
 
 	Engine::~Engine() {
@@ -149,8 +151,16 @@ namespace scimitar::core {
 						std::cout << "Stalled during system initialization\n";
 
 						for (const auto& ptr : m_Systems)
-							if (!util::contains(m_InitOrder, sytem_name))
-								std::cout << "\tFailed to initialize: " << sytem_name << "\n";
+							if (!util::contains(m_InitOrder, sytem_name)) {
+								// try to be specific about what's missing
+								std::cout << "\tFailed to initialize: " << sytem_name << ", missing dependencies ";
+
+								for (const auto& dep : ptr->get_dependencies())
+									if (!util::contains(m_InitOrder, dep))
+										std::cout << "'" << dep << "' ";
+
+								std::cout << "\n";
+							}
 
 						throw std::runtime_error("Stalled during system initialization\n");
 					}
