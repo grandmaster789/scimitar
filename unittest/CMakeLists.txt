@@ -6,6 +6,7 @@ project(${UNIT_TEST} LANGUAGES CXX)
 
 add_executable(${UNIT_TEST}
 	"unittest.cpp"
+	"util/test_function.cpp"
 )
 
 find_package(GTest CONFIG REQUIRED)
@@ -13,6 +14,7 @@ find_package(GTest CONFIG REQUIRED)
 include_directories(../scimitar)
 
 target_link_libraries(${UNIT_TEST} PRIVATE
+	scimitar_lib
 	GTest::gtest
 	GTest::gtest_main
 	GTest::gmock

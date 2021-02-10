@@ -10,4 +10,5 @@
 #include "os/os.h"
 #include "renderer/renderer.h"
 #include "util/algorithm.h"
+#include "util/function.h"
 #include "util/typemap.h"

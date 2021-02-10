@@ -21,6 +21,7 @@ vcpkg.exe install ^
 	gtest:x64-windows ^
 	glfw3:x64-windows ^
 	ms-gsl:x64-windows ^
+	cppcoro:x64-windows ^
 	nlohmann-json:x64-windows ^
 	tinyobjloader:x64-windows ^
 	--clean-after-build

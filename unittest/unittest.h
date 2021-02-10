@@ -5,6 +5,8 @@
 
 #include <filesystem>
 
+#include <scimitar.h>
+
 std::filesystem::path getExePath();
 std::filesystem::path getExeFolder();
 std::filesystem::path getProjectRoot();
