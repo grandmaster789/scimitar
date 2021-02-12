@@ -6,6 +6,8 @@ namespace scimitar {
 	OS::OS():
 		System("OS")
 	{
+		add_dependency("Input"); // because we create a window during initialization, and that window needs to register its inputs somewhere
+
 		register_setting("window_width",      &m_WindowSettings.m_Width);
 		register_setting("window_height",     &m_WindowSettings.m_Height);
 		register_setting("window_fullscreen", &m_WindowSettings.m_Fullscreen);

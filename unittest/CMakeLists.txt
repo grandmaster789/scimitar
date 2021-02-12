@@ -7,6 +7,7 @@ project(${UNIT_TEST} LANGUAGES CXX)
 add_executable(${UNIT_TEST}
 	"unittest.cpp"
 	"util/test_function.cpp"
+	"util/test_unique_resource.cpp"
 )
 
 find_package(GTest CONFIG REQUIRED)

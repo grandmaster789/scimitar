@@ -2,6 +2,7 @@
 #include "../util/algorithm.h"
 #include "../renderer/renderer.h"
 #include "../os/os.h"
+#include "../input/input.h"
 #include "../dependencies.h"
 
 #include <stdexcept>
@@ -31,6 +32,7 @@ namespace scimitar::core {
 	Engine::Engine() {
 		add<Renderer>();
 		add<OS>();
+		add<Input>();
 	}
 
 	Engine::~Engine() {
