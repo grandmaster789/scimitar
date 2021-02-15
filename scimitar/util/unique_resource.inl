@@ -15,8 +15,7 @@ namespace scimitar::util {
 
 	template <typename T, typename D>
 	UniqueResource<T, D>::~UniqueResource() {
-		if (m_Handle)
-			m_Deleter(*m_Handle);
+		reset();
 	}
 
 	template <typename T, typename D>
@@ -30,12 +29,11 @@ namespace scimitar::util {
 	}
 
 	template <typename T, typename D>
-	constexpr UniqueResource<T, D>::UniqueResource& operator = (UniqueResource&& ur) noexcept(
+	constexpr UniqueResource<T, D>& UniqueResource<T, D>::operator = (UniqueResource&& ur) noexcept(
 		std::is_nothrow_move_assignable_v<T>&&
 		std::is_nothrow_move_assignable_v<D>
 	) {
-		if (m_Handle)
-			m_Deleter(*m_Handle);
+		reset();
 
 		m_Handle  = std::move(ur.m_Handle);
 		m_Deleter = std::move(ur.m_Deleter);
@@ -59,12 +57,13 @@ namespace scimitar::util {
 	}
 
 	template <typename T, typename D>
-	constexpr D& UniqueResource<T, D>::getDeleter() {
-		return m_Deleter;
+	constexpr void UniqueResource<T, D>::reset() {
+		if (m_Handle)
+			m_Deleter(*m_Handle);
 	}
 
-	template <typename T, typename D>
-	constexpr const D& UniqueResource<T, D>::getDeleter() const {
+	/*template <typename T, typename D>
+	constexpr D& UniqueResource<T, D>::getDeleter() {
 		return m_Deleter;
-	}
+	}*/
 }

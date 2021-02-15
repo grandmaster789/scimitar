@@ -12,3 +12,4 @@
 #include "util/algorithm.h"
 #include "util/function.h"
 #include "util/typemap.h"
+#include "util/unique_resource.h"

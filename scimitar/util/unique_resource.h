@@ -34,9 +34,9 @@ namespace scimitar::util {
 		constexpr tHandle operator -> () const noexcept;
 		
 		constexpr void release();
+		constexpr void reset();
 
-		constexpr       tDeleter& getDeleter();
-		constexpr const tDeleter& getDeleter() const;
+		//constexpr tDeleter& getDeleter();
 
 	private:
 		std::optional<tHandle> m_Handle;
