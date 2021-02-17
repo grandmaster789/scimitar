@@ -42,12 +42,22 @@ namespace scimitar::util {
 	}
 
 	template <typename T, typename D>
+	constexpr UniqueResource<T, D>::operator bool() const noexcept {
+		return (m_Handle != std::nullopt_t);
+	}
+
+	template <typename T, typename D>
 	constexpr T UniqueResource<T, D>::get() const noexcept {
 		return *m_Handle;
 	}
 
 	template <typename T, typename D>
-	constexpr T UniqueResource<T, D>::operator -> () const noexcept {
+	constexpr T* UniqueResource<T, D>::operator -> () const noexcept {
+		return &(*m_Handle);
+	}
+
+	template <typename T, typename D>
+	constexpr const T& UniqueResource<T, D>::operator * () const noexcept {
 		return *m_Handle;
 	}
 
@@ -61,9 +71,4 @@ namespace scimitar::util {
 		if (m_Handle)
 			m_Deleter(*m_Handle);
 	}
-
-	/*template <typename T, typename D>
-	constexpr D& UniqueResource<T, D>::getDeleter() {
-		return m_Deleter;
-	}*/
 }

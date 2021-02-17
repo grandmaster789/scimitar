@@ -30,18 +30,27 @@ namespace scimitar::util {
 			std::is_nothrow_move_assignable_v<tDeleter>
 		);
 
-		constexpr tHandle get() const noexcept;
-		constexpr tHandle operator -> () const noexcept;
+		explicit constexpr operator bool() const noexcept;
+
+		constexpr       tHandle  get()          const noexcept;
+		constexpr       tHandle* operator -> () const noexcept;
+		constexpr const tHandle& operator * ()  const noexcept;
 		
 		constexpr void release();
 		constexpr void reset();
 
-		//constexpr tDeleter& getDeleter();
+		void swap(UniqueResource& ur);
 
 	private:
 		std::optional<tHandle> m_Handle;
 		tDeleter               m_Deleter;
 	};
+
+	template <typename T, typename D>
+	void swap(
+		UniqueResource<T, D>& a,
+		UniqueResource<T, D>& b
+	);
 }
 
 #include "unique_resource.inl"

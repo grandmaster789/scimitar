@@ -33,7 +33,7 @@ add_library(${SCIMITAR_LIB} STATIC
 	"util/function.h" 
 	"util/spin_mutex.h" 
 	"util/spin_mutex.cpp"
-       "input/keyboard.h" "input/keyboard.cpp" "input/mouse.h" "input/mouse.cpp" "core/mediator.h" "core/detail/mediator_queue.h")
+       "input/keyboard.h" "input/keyboard.cpp" "input/mouse.h" "input/mouse.cpp" "core/mediator.h" "core/detail/mediator_queue.h" "math/clamp.h")
 
 # vcpkg dependencies
 find_package(nlohmann_json CONFIG REQUIRED)
