@@ -10,30 +10,42 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 add_library(${SCIMITAR_LIB} STATIC
 	"scimitar.cpp"
-	"os/window.h"
-	"os/window.cpp"
-	"core/engine.h"
-	"core/engine.cpp"
-	"util/algorithm.h"
-	"core/system.h"
-	"core/system.cpp"
+
+	"compile_options.h" 
 	"dependencies.h" 
 	"dependencies.cpp"
 	"preprocessor.h" 
-	"util/typemap.h" 
 	"app/application.h" 
 	"app/application.cpp"
-	"renderer/renderer.h" 
-	"renderer/renderer.cpp" 
+	"core/engine.h"
+	"core/engine.cpp"
+	"core/mediator.h" 
+	"core/system.h"
+	"core/system.cpp"
+	"core/detail/mediator_queue.h" 
 	"os/os.h" 
 	"os/os.cpp"
-	"compile_options.h" 
+	"os/window.h"
+	"os/window.cpp"
+	"renderer/renderer.h" 
+	"renderer/renderer.cpp" 
 	"input/input.cpp" 
 	"input/input.h" 
+	"input/keyboard.h" 
+	"input/keyboard.cpp" 
+	"input/mouse.h" 
+	"input/mouse.cpp" 
+	"math/helpers.h" 
+	"util/algorithm.h"
 	"util/function.h" 
+	"util/literals.h" 
 	"util/spin_mutex.h" 
 	"util/spin_mutex.cpp"
-       "input/keyboard.h" "input/keyboard.cpp" "input/mouse.h" "input/mouse.cpp" "core/mediator.h" "core/detail/mediator_queue.h")
+	"util/string_util.h" 
+	"util/string_util.cpp"
+	"util/typemap.h" 
+	"util/debugger.h"
+ "util/debugger.cpp" "util/concepts.h")
 
 # vcpkg dependencies
 find_package(nlohmann_json CONFIG REQUIRED)
@@ -41,6 +53,7 @@ find_package(glfw3 CONFIG REQUIRED)
 find_package(tinyobjloader REQUIRED)
 find_package(Microsoft.GSL CONFIG REQUIRED)
 find_package(unofficial-concurrentqueue CONFIG REQUIRED)
+find_package(fmt CONFIG REQUIRED)
 
 # vulkan and shaderc are part of the Vulkan SDK 
 find_package(Vulkan REQUIRED)
@@ -51,6 +64,7 @@ PUBLIC
 	glfw
 	Vulkan::Vulkan
 	Microsoft.GSL::GSL
+	fmt::fmt
 
 PRIVATE
 	nlohmann_json

@@ -1,46 +1,39 @@
 #pragma once
 
 #include <utility>
-#include <optional> // may make my own at some point
+#include <optional>
 
 namespace scimitar::util {
 	template <
-		typename tHandle,
+		typename tResource, 
 		typename tDeleter
 	>
 	class UniqueResource {
 	public:
-		constexpr UniqueResource() = default; // initializes the handle to std::none_t
-		constexpr UniqueResource(
-			tHandle&&  handle,
-			tDeleter&& deleter = {}
-		);
-		~UniqueResource();
+		explicit UniqueResource(
+			tResource&& resource,
+			tDeleter&&  deleter
+		) noexcept;
+		~UniqueResource() noexcept;
 
-		constexpr UniqueResource             (const UniqueResource&) = delete;
-		constexpr UniqueResource& operator = (const UniqueResource&) = delete;
-
-		constexpr UniqueResource(UniqueResource&& ur) noexcept(
-			std::is_nothrow_constructible_v<tHandle>  &&
-			std::is_nothrow_constructible_v<tDeleter>
-		);
-
-		constexpr UniqueResource& operator = (UniqueResource&& ur) noexcept(
-			std::is_nothrow_move_assignable_v<tHandle>  &&
-			std::is_nothrow_move_assignable_v<tDeleter>
-		);
-
-		constexpr tHandle get() const noexcept;
-		constexpr tHandle operator -> () const noexcept;
+		UniqueResource             (const UniqueResource&) = delete;
+		UniqueResource& operator = (const UniqueResource&) = delete;
+		UniqueResource             (UniqueResource&& ur) noexcept(std::is_nothrow_move_constructible_v<tResource>);
+		UniqueResource& operator = (UniqueResource&& ur) noexcept(std::is_nothrow_move_assignable_v<tResource>);
 		
-		constexpr void release();
-		constexpr void reset();
+		void reset() noexcept;
+		
+		      tResource release() noexcept; // will default-construct if the resource was nullopt
 
-		//constexpr tDeleter& getDeleter();
+		const tResource& operator * () const noexcept;
+		      tResource* operator ->() const noexcept;
+
+		const tResource& get()        const noexcept;
+		const tDeleter&  getDeleter() const noexcept;
 
 	private:
-		std::optional<tHandle> m_Handle;
-		tDeleter               m_Deleter;
+		std::optional<tResource> m_Resource;
+		tDeleter                 m_Deleter;
 	};
 }
 

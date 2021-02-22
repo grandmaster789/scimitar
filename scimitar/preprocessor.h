@@ -63,7 +63,7 @@
 	#include <SDKDDKVer.h>
 	#include <Windows.h>
 	#include <intrin.h>
-	// TODO: stack tracing via <dbghelp.h>, or alternatively via boost::stacktrace
+	#include <debugapi.h>
 
 	#define VK_USE_PLATFORM_WIN32_KHR
 #endif

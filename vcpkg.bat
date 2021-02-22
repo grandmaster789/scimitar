@@ -24,6 +24,7 @@ vcpkg.exe install ^
 	cppcoro:x64-windows ^
 	nlohmann-json:x64-windows ^
 	tinyobjloader:x64-windows ^
+	fmt:x64-windows ^
 	--clean-after-build
 
 rem NOTE you'll need to install the Vulkan SDK separately, I did not find a way to use vcpkg for that...
