@@ -4,7 +4,7 @@
 
 namespace scimitar {
 	constexpr ssize_t operator "" _z(unsigned long long value) noexcept {
-		return static_cast<ssize_t>)value);
+		return static_cast<ssize_t>(value);
 	}
 
 	constexpr size_t  operator "" _uz(unsigned long long value) noexcept {

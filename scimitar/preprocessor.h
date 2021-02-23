@@ -41,7 +41,7 @@
 	#define NOKERNEL            // - All KERNEL defines and routines
 	//#define NOUSER            // - All USER defines and routines
 	#define NONLS               // - All NLS defines and routines
-	#define NOMB                // - MB_ * and MessageBox()
+	//#define NOMB              // - MB_ * and MessageBox()
 	#define NOMEMMGR            // - GMEM_ * , LMEM_*, GHND, LHND, associated routines
 	#define NOMETAFILE          // - typedef METAFILEPICT
 	#define NOMINMAX            // - Macros min(a, b) and max(a, b)
@@ -68,6 +68,18 @@
 	#define VK_USE_PLATFORM_WIN32_KHR
 #endif
 
+// figure out what processor this is built for (really only tested on x64)
+#define SCIMITAR_PROCESSOR_X64 1
+#define SCIMITAR_PROCESSOR_ARM 2
+
+#if defined(__x86_64__) || defined(__amd64__) || defined(_M_AMD64)
+	#define SCIMITAR_PROCESSOR SCIMITAR_PROCESSOR_X64
+#elif defined(__arm__) || defined(_M_ARM)
+	#define SCIMITAR_PROCESSOR SCIMITAR_PROCESSOR_ARM
+#else
+	#error "Could not detect processor"
+#endif
+
 // with MSVC we can figure out wheter this is a debug build
 #ifdef _DEBUG
 	#define SCIMITAR_DEBUG
@@ -81,3 +93,36 @@
 #ifdef max
 	#undef max
 #endif
+
+// make preprocessor stuff available 
+namespace scimitar {
+	enum class ePlatform {
+		windows = SCIMITAR_PLATFORM_WINDOWS,
+		linux   = SCIMITAR_PLATFORM_LINUX,
+
+		current = SCIMITAR_PLATFORM
+	};
+
+	enum class eProcessor {
+		x64 = SCIMITAR_PROCESSOR_X64,
+		arm = SCIMITAR_PROCESSOR_ARM,
+
+		current = SCIMITAR_PROCESSOR
+	};
+
+	constexpr bool has_SSE = (eProcessor::current == eProcessor::x64);
+	
+	// these should be part of the standard, but right now aren't implemented by clang or gcc
+#if SCIMITAR_PROCESSOR == SCIMITAR_PROCESSOR_X64
+	constexpr size_t hardware_constructive_inference_size = 64;
+	constexpr size_t hardware_destructive_inference_size  = 128;
+
+#elif SCIMITAR_PROCESSOR == SCIMITAR_PROCESSOR_ARM
+	constexpr size_t hardware_constructive_inference_size = 64;
+	constexpr size_t hardware_destructive_inference_size  = 64;
+
+#else
+	#error "not implemented"
+
+#endif
+}

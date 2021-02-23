@@ -45,7 +45,13 @@ add_library(${SCIMITAR_LIB} STATIC
 	"util/string_util.cpp"
 	"util/typemap.h" 
 	"util/debugger.h"
- "util/debugger.cpp" "util/concepts.h")
+	"util/debugger.cpp" 
+	"util/concepts.h" 
+	"util/codec/utf.h" 
+	"util/codec/utf.cpp" 
+	"util/codec/codepage_1252.h" 
+	"util/codec/codepage_1252.cpp"
+ "util/endian.h" "util/memory.h")
 
 # vcpkg dependencies
 find_package(nlohmann_json CONFIG REQUIRED)
