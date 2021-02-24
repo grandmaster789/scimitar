@@ -1,7 +1,11 @@
 #pragma once
 
+#include <array>
+#include <array>
 #include <vector>
 #include <memory>
+#include <tuple>
+#include <iterator>
 
 namespace scimitar::util {
 	// 
@@ -56,11 +60,41 @@ namespace scimitar::util {
 		      tPredicate  pred
 	);
 
+	template <typename tIteratorA, typename tIteratorB>
+	[[nodiscard]] constexpr tIteratorA find_any_of(
+		tIteratorA haystack_first,
+		tIteratorA haystack_last,
+		tIteratorB needles_first,
+		tIteratorB needles_last
+	) noexcept; // returns haystack_last if none was found
+
 	template <typename tContainer>
 	void sort(tContainer& c);
 
 	template <typename tContainer>
 	void uniquify(tContainer& c); // eliminates duplicate values from a container (also sorts it)
+
+	template <typename T, typename U>
+	[[nodiscard]] bool assign_if_changed(T& old_value, U&& new_value) noexcept; // returns true if the value was changed
+
+	template <
+		typename tContainerA,
+		typename tContainerB,
+		typename tFunctor
+	>
+	tContainerA transform(
+		const tContainerB& source,
+		tFunctor fn
+	);
+
+	template <
+		typename T,
+		size_t   N,
+		typename tFunctor // fn(size_t) -> T
+	>
+	constexpr std::array<T, N> generate_array(tFunctor fn);
+
+
 }
 
 #include "algorithm.inl"

@@ -90,6 +90,28 @@ namespace scimitar::util {
 		);
 	}
 
+	template <typename tIteratorA, typename tIteratorB>
+	[[nodiscard]] constexpr tIteratorA find_any_of(
+		tIteratorA haystack_first,
+		tIteratorA haystack_last,
+		tIteratorB needles_first,
+		tIteratorB needles_last
+	) noexcept {
+		return std::find_if(
+			haystack_first,
+			haystack_last,
+			[needles_first, needles_last](const auto& hay) {
+				return std::any_of(
+					needles_first,
+					needles_last,
+					[&hay](const auto& needle) {
+						return (needle == hay);
+					}
+				);
+			}
+		);
+	}
+
 	template <typename C>
 	void sort(C& c) {
 		std::sort(
@@ -111,5 +133,39 @@ namespace scimitar::util {
 			it, 
 			std::end(c)
 		);
+	}
+
+	template <typename T, typename U>
+	[[nodiscard]] bool assign_if_changed(T& old_value, U&& new_value) noexcept {
+		if (old_value == new_value)
+			return false;
+
+		old_value = std::forward<U>(new_value);
+		return true;
+	}
+
+	template <typename T, typename U, typename Fn>
+	T transform(const U& source, Fn fn) {
+		T result;
+		result.reserve(source.size());
+
+		std::transform(
+			std::begin(source),
+			std::end(source),
+			std::back_inserter(result),
+			fn
+		);
+
+		return result;
+	}
+
+	template <typename T, size_t N, typename Fn>
+	constexpr std::array<T, N> generate_array(Fn fn) {
+		std::array<T, N> result;
+
+		for (size_t i = 0; i < N; ++i)
+			result[i] = fn(i);
+
+		return result;
 	}
 }
