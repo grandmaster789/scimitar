@@ -3,7 +3,7 @@
 #include "codec/utf.h"
 #include "../preprocessor.h"
 
-#if SCIMITAR_PLATFORM ==SCIMITAR_PLATFORM_WINDOWS
+#if SCIMITAR_PLATFORM == SCIMITAR_PLATFORM_WINDOWS
 
 namespace scimitar::util {
 	bool debugger_present() noexcept {

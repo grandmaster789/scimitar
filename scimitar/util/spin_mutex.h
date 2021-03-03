@@ -18,6 +18,8 @@ namespace scimitar::util {
 		void unlock()   noexcept;
 
 	private:
+		void lock_contention(uint32_t expected) noexcept;
+
 		std::atomic<uint32_t> m_Semaphore = 0;
 	};
 }
