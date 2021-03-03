@@ -7,7 +7,7 @@
 #include <iterator>
 #include <type_traits>
 
-namespace scimitar::util {
+namespace scimitar::util::detail {
 	template <typename It>
 	[[nodiscard]] constexpr char32_t utf8_to_utf32(It& it) noexcept {
 		using V = typename std::iterator_traits<It>::value_type;

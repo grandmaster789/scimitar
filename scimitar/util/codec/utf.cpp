@@ -118,8 +118,8 @@ namespace scimitar::util {
         auto it       = std::begin(sv);
 
         while (it != std::end(sv)) {
-            char32_t x = utf8_to_utf32(it);
-            utf32_to_utf16(x, inserter);
+            char32_t x = detail::utf8_to_utf32(it);
+            detail::utf32_to_utf16(x, inserter);
         }
 
         return result;
@@ -132,7 +132,7 @@ namespace scimitar::util {
         auto inserter = std::back_inserter(result);
 
         for (auto x : sv)
-            utf32_to_utf16(x, inserter);
+            detail::utf32_to_utf16(x, inserter);
 
         return result;
     }
@@ -174,7 +174,7 @@ namespace scimitar::util {
         result.reserve(sv.size());
 
         for (auto it = std::begin(sv); it != std::end(sv);)
-            result += utf8_to_utf32(it);
+            result += detail::utf8_to_utf32(it);
 
         return result;
     }
@@ -186,7 +186,7 @@ namespace scimitar::util {
         auto it = std::begin(sv);
         
         while (it != std::end(sv))
-            result += utf16_to_utf32(it);
+            result += detail::utf16_to_utf32(it);
 
         return result;
     }
@@ -348,7 +348,7 @@ namespace scimitar::util {
         for (auto it = first; is_valid && it != last;) {
             old = it;
 
-            is_valid &= utf8_to_utf32(it, last, codepoint);
+            is_valid &= detail::utf8_to_utf32(it, last, codepoint);
         }
 
         if (is_valid)
@@ -363,12 +363,12 @@ namespace scimitar::util {
 
         // - add the last decoded code point
         auto inserter = std::back_inserter(valid);
-        utf32_to_utf8(codepoint, inserter);
+        detail::utf32_to_utf8(codepoint, inserter);
 
         // re-encode the rest
         for (auto it = old + 1; it != last;) {
-            utf8_to_utf32(it, last, codepoint);
-            utf32_to_utf8(codepoint, inserter);
+            detail::utf8_to_utf32(it, last, codepoint);
+            detail::utf32_to_utf8(codepoint, inserter);
         }
         
         return valid;
