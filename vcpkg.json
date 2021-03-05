@@ -1,0 +1,16 @@
+{
+  "name": "scimitar",
+  "version-string": "0.0.1",
+  "port-version": 1,
+  "description": "Experimental vulkan engine",
+  "dependencies": [
+    "concurrentqueue",
+    "gtest",
+    "ms-gsl",
+    "cppcoro",
+    "nlohmann-json",
+    "tinyobjloader",
+    "fmt",
+    "glfw3"
+  ]
+}
