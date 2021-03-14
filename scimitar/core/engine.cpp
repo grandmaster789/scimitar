@@ -10,10 +10,6 @@
 #include <fstream>
 
 namespace {
-	void glfw_error_callback(int error_code, const char* description) {
-		std::cerr << "GLFW error (" << error_code << "): " << description << "\n";
-	}
-
 	bool is_satisfied(
 		scimitar::core::System*         s,
 		const std::vector<std::string>& already_initialized
@@ -66,18 +62,9 @@ namespace scimitar::core {
 	}
 
 	void Engine::start_libraries() {
-		// there are some flags that could be set as initialization hints for GLFW
-		// (see https://www.glfw.org/docs/latest/intro_guide.html#init_hints_values)
-
-		// glfw error callback should eventually also log the error
-		glfwSetErrorCallback(&glfw_error_callback);
-
-		if (glfwInit() != GLFW_TRUE)
-			throw std::runtime_error("Failed to initialize GLFW");
 	}
 
 	void Engine::stop_libraries() {
-		glfwTerminate(); // destroys all remaining windows etc		
 	}
 
 	void Engine::start_systems() {

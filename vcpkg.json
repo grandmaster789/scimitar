@@ -10,7 +10,6 @@
     "cppcoro",
     "nlohmann-json",
     "tinyobjloader",
-    "fmt",
-    "glfw3"
+    "fmt"
   ]
 }

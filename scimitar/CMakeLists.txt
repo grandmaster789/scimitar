@@ -51,11 +51,10 @@ add_library(${SCIMITAR_LIB} STATIC
 	"util/codec/utf.cpp" 
 	"util/codec/codepage_1252.h" 
 	"util/codec/codepage_1252.cpp"
- "util/endian.h" "util/memory.h" )
+ "util/endian.h" "util/memory.h"  "gui/widget.h")
 
 # vcpkg dependencies
 find_package(nlohmann_json CONFIG REQUIRED)
-find_package(glfw3 CONFIG REQUIRED)
 find_package(tinyobjloader REQUIRED)
 find_package(Microsoft.GSL CONFIG REQUIRED)
 find_package(unofficial-concurrentqueue CONFIG REQUIRED)
@@ -67,7 +66,6 @@ find_library(SHADERC_LIB shaderc_combined $ENV{VULKAN_SDK}/Lib)
 
 target_link_libraries(${SCIMITAR_LIB} 
 PUBLIC
-	glfw
 	Vulkan::Vulkan
 	Microsoft.GSL::GSL
 	fmt::fmt

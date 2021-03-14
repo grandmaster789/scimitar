@@ -31,12 +31,10 @@ namespace scimitar {
 			ai.setPEngineName       ("Scimitar engine");
 
 			uint32_t     num_extensions  = 0;
-			const char** glfw_extensions = glfwGetRequiredInstanceExtensions(&num_extensions);
 
-			std::vector<const char*> requiredInstanceExtensions(
-				glfw_extensions,
-				glfw_extensions + num_extensions
-			);
+			std::vector<const char*> requiredInstanceExtensions;
+
+			//~~
 
 			vk::InstanceCreateInfo ici;
 			ici.setPApplicationInfo(&ai);
@@ -55,8 +53,6 @@ namespace scimitar {
 			if (win->should_close())
 				std::erase_if(m_Windows, [win](const auto& ptr) { return ptr.get() == win; });
 		}
-
-		glfwPollEvents(); // process pending events
 
 		if (m_Windows.empty())
 			m_Engine->stop();

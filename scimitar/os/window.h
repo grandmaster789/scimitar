@@ -1,7 +1,5 @@
 #pragma once
 
-#include <GLFW/glfw3.h>
-
 namespace scimitar::os {
 	class Window {
 	public:
@@ -20,10 +18,7 @@ namespace scimitar::os {
 
 		bool should_close() const;
 
-		GLFWwindow* handle() const;
-
 	private:
-		GLFWwindow* m_Handle = nullptr;
 
 		int  m_Width      = 1280;
 		int  m_Height     = 720;
