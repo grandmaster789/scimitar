@@ -37,12 +37,6 @@ elseif(UNIX)
 	add_compile_options("-fvisibility=hidden")
 endif()
 
-# provide a link 'library' to enable warnings
-# (must be declared INTERFACE because it doesn't contain any code)
-add_library(project_warnings INTERFACE)
-include(dependencies/CompilerWarnings.cmake)
-set_project_warnings(project_warnings)
-
 # this needs to be active before adding the unittest subproject (if you want to have unit tests)
 enable_testing()
 

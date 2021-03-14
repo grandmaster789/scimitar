@@ -7,7 +7,7 @@
 
 namespace scimitar::util {
 	[[nodiscard]] constexpr bool is_upper        (char c) noexcept; // A-Z
-	[[nodiscard]] constexpr bool is_lower        (char c) noexcept; // a-Z
+	[[nodiscard]] constexpr bool is_lower        (char c) noexcept; // a-z
 	[[nodiscard]] constexpr bool is_alpha        (char c) noexcept; // A-Za-z
 	[[nodiscard]] constexpr bool is_digit        (char c) noexcept; // 0-9
 	[[nodiscard]] constexpr bool is_alphanum     (char c) noexcept; // A-Za-z0-9
