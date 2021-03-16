@@ -87,6 +87,9 @@ namespace scimitar::util {
 		tFunctor fn
 	);
 
+	template <typename C, typename V>
+	void fill(C& container, const V& value);
+
 	template <
 		typename T,
 		size_t   N,

@@ -159,6 +159,15 @@ namespace scimitar::util {
 		return result;
 	}
 
+	template <typename C, typename V>
+	void fill(C& container, const V& value) {
+		std::fill(
+			std::begin(container), 
+			std::end(container), 
+			value
+		);
+	}
+
 	template <typename T, size_t N, typename Fn>
 	constexpr std::array<T, N> generate_array(Fn fn) {
 		std::array<T, N> result;
