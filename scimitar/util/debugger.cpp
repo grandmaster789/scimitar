@@ -48,6 +48,7 @@ namespace scimitar::util {
 }
 
 #elif SCIMITAR_PLATFORM == SCIMITAR_PLATFORM_LINUX
+	// not sure what a reasonable development workflow looks like here tbh
 #else
 	#error "not implemented"
 #endif

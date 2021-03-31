@@ -1,5 +1,7 @@
 #include "unittest.h"
 
+#include <compare>
+
 namespace {
 	std::filesystem::path g_ExePath;
 	std::filesystem::path g_ExeFolder;
@@ -25,6 +27,7 @@ std::filesystem::path getAssetFolder() {
 
 int main(int argc, char* argv[]) {
 	::testing::InitGoogleTest(&argc, argv);
+
 
 	g_ExePath     = argv[0];
 	g_ExeFolder   = g_ExePath.parent_path();

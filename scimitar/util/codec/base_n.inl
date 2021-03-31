@@ -6,7 +6,7 @@ namespace scimitar::util::codec {
 	namespace detail {
 		template <size_t N>
 		requires(N < 128)
-		constexpr BaseN_Alphabet::BaseN_Alphabet(
+		constexpr BaseN::BaseN(
 			const char(&text)[N],				      // null terminated string with le alphabet
 			bool       is_case_sensitive,
 			char       padding_character

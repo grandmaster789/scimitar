@@ -5,6 +5,7 @@
 #include <cstdint>
 #include <array>
 #include <string_view>
+#include <compare>
 
 namespace scimitar::util {
 	// 
@@ -12,7 +13,7 @@ namespace scimitar::util {
 	// Somewhat based around UUIDs (https://en.wikipedia.org/wiki/Universally_unique_identifier) 
 	// (as in 128-bit unsinged integer composed out of 2x uint64_t == Biguint<uint64_t, 2>)
 	// (this is also the reason it's in the util namespace)
-	template <util::cUnsigned T, int N>
+	template <std::unsigned_integral T, int N>
 	class Biguint {
 	public:
 		using Digit = T;
@@ -26,7 +27,9 @@ namespace scimitar::util {
 		template <util::cIntegral U>
 		Biguint(U value) noexcept;                                     // implicit construction from native integer types
 		
-		explicit Biguint(std::string_view sv, int base = 10) noexcept; // explicit construction from string (assume base decimal default)
+		explicit Biguint(std::string_view sv, int base = 10) noexcept; // explicit construction from string (supports base 2/8/10/16)
+
+		std::string to_string() const noexcept;
 
 		template <int M>
 		requires (M < N)
@@ -37,14 +40,31 @@ namespace scimitar::util {
 
 		explicit operator bool() const noexcept;
 
-		[[nodiscard]]
-		friend int biguint_cmp(const Biguint& a, const Biguint& b) noexcept;
+		bool                 operator ==  (const Biguint& rhs) const noexcept;
+		std::strong_ordering operator <=> (const Biguint& rhs) const noexcept;
 
-		[[nodiscard]]
-		friend bool operator == (const Biguint& a, const Biguint& b) noexcept;
+		Biguint& operator += (const Biguint& rhs) noexcept;
+		Biguint& operator -= (const Biguint& rhs) noexcept;
+		Biguint& operator *= (const Biguint& rhs) noexcept;
+		Biguint& operator /= (const Biguint& rhs) noexcept;
+
+		Biguint operator + (const Biguint& rhs) const noexcept;
+		Biguint operator - (const Biguint& rhs) const noexcept;
+		Biguint operator * (const Biguint& rhs) const noexcept;
+		Biguint operator / (const Biguint& rhs) const noexcept;
 
 	private:
 		static_assert(sizeof(int16_t) == 2); // ensure that we have 8 bits per byte
+
+		struct DivResult {
+			Biguint m_Quotient;
+			Biguint m_Remainder;
+		};
+
+		Biguint   add(const Biguint& rhs) const noexcept;
+		Biguint   sub(const Biguint& rhs) const noexcept;
+		Biguint   mul(const Biguint& rhs) const noexcept;
+		DivResult div(const Biguint& rhs) const noexcept;
 
 		static constexpr int m_NumDigits    = N;
 		static constexpr int m_BitsPerDigit = sizeof(Digit) * 8;

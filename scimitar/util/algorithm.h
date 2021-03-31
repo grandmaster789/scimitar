@@ -88,7 +88,7 @@ namespace scimitar::util {
 	);
 
 	template <typename C, typename V>
-	void fill(C& container, const V& value);
+	constexpr void fill(C& container, const V& value);
 
 	template <
 		typename T,

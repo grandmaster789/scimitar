@@ -51,7 +51,7 @@ add_library(${SCIMITAR_LIB} STATIC
 	"util/codec/utf.cpp" 
 	"util/codec/codepage_1252.h" 
 	"util/codec/codepage_1252.cpp"
- "util/endian.h" "util/memory.h"  "gui/widget.h" "util/biguint.h" "util/codec/base_n.h" "util/codec/base_n.cpp" )
+ "util/endian.h" "util/memory.h"  "gui/widget.h" "util/biguint.h" "util/codec/base_n.h" "util/codec/base_n.cpp"  "util/cast.h")
 
 # vcpkg dependencies
 find_package(nlohmann_json CONFIG REQUIRED)

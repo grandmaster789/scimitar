@@ -8,7 +8,7 @@ namespace test {
 			ubig128 a = 1;
 			ubig128 b(1);
 
-			ASSERT_EQ(a, b);
+			ASSERT_EQ(a, b);		
 		}
 
 		/*
