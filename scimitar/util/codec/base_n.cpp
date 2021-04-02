@@ -10,7 +10,7 @@ namespace scimitar::util::codec {
 			return m_IntToCharacter[x];
 		}
 
-		int8_t BaseN::from_char(char c) const noexcept {
+		constexpr int8_t BaseN::from_char(char c) const noexcept {
 			// was getting weird warnings C28020 here?
 			//return m_CharacterToInt[c];
 			return m_CharacterToInt[std::bit_cast<uint8_t>(c)];

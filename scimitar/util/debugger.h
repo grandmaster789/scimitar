@@ -39,6 +39,6 @@ namespace scimitar::util {
 	);
 }
 
-#define debugger_abort(...) ::scimitar::util::debugger_fatal(__FILE__, __LINE__ __VA_OPT__(,) __VA_ARGS__)
+#define debugger_abort(...) ::scimitar::util::debugger_fatal(__FILE__, __LINE__ __VA_OPT__(, ) __VA_ARGS__)
 
 #include "debugger.inl"

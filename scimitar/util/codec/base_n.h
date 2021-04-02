@@ -29,7 +29,6 @@ namespace scimitar::util::codec {
 			std::array<char, 127>   m_IntToCharacter = {}; 
 
 			template <size_t N>
-			requires (N < 128)
 			constexpr BaseN(
 				const char (&text)[N],				       // null terminated string with le alphabet
 				bool       is_case_sensitive = (N >= 33),  // base16, base32, base32hex should treat upper and lower case letters the same
@@ -37,19 +36,19 @@ namespace scimitar::util::codec {
 			) noexcept;
 
 			constexpr char   from_int (int8_t x) const noexcept;
-			 int8_t from_char(char c)   const noexcept;
+			constexpr int8_t from_char(char c)   const noexcept;
 		};
 	}
 
-	constexpr auto c_Base2             = detail::BaseN { "01" };
-	constexpr auto c_Base8             = detail::BaseN { "01234567" };
-	constexpr auto c_Base10            = detail::BaseN { "0123456789" };
-	constexpr auto c_Base16            = detail::BaseN { "0123456789ABCDEF" };
-	constexpr auto c_Base32_rfc4648    = detail::BaseN { "ABCDEFGHIJKLMNOPQRSTUVWXYZ234567"}; // https://tools.ietf.org/html/rfc4648#page-8
-	constexpr auto c_Base32hex_rfc4648 = detail::BaseN { "0123456789ABCDEFGHIJKLMNOPQRSTUV"}; // https://tools.ietf.org/html/rfc4648#page-10
-	constexpr auto c_Base64_rfc4648    = detail::BaseN { "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/", true, '=' }; // https://tools.ietf.org/html/rfc4648#page-5
-	constexpr auto c_Base64url_rfc4648 = detail::BaseN { "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_", true, '=' }; // https://tools.ietf.org/html/rfc4648#page-7
-	constexpr auto c_Base85_rfc1924    = detail::BaseN { "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!#$%&()*+-;<=>?@^_`{|}~",   true }; // https://tools.ietf.org/html/rfc1924
+	constexpr detail::BaseN c_Base2             ("01");
+	constexpr detail::BaseN c_Base8             ("01234567");
+	constexpr detail::BaseN c_Base10            ("0123456789");
+	constexpr detail::BaseN c_Base16            ("0123456789ABCDEF");
+	constexpr detail::BaseN c_Base32_rfc4648    ("ABCDEFGHIJKLMNOPQRSTUVWXYZ234567"); // https://tools.ietf.org/html/rfc4648#page-8
+	constexpr detail::BaseN c_Base32hex_rfc4648 ("0123456789ABCDEFGHIJKLMNOPQRSTUV"); // https://tools.ietf.org/html/rfc4648#page-10
+	constexpr detail::BaseN c_Base64_rfc4648    ("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/", true, '='); // https://tools.ietf.org/html/rfc4648#page-5
+	constexpr detail::BaseN c_Base64url_rfc4648 ("ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_", true, '='); // https://tools.ietf.org/html/rfc4648#page-7
+	constexpr detail::BaseN c_Base85_rfc1924    ("0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz!#$%&()*+-;<=>?@^_`{|}~",   true); // https://tools.ietf.org/html/rfc1924
 }
 
 #include "base_n.inl"

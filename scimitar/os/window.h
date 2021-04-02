@@ -19,7 +19,6 @@ namespace scimitar::os {
 		bool should_close() const;
 
 	private:
-
 		int  m_Width      = 1280;
 		int  m_Height     = 720;
 		bool m_Fullscreen = false;

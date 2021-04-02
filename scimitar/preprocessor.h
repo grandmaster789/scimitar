@@ -94,6 +94,8 @@
 	#undef max
 #endif
 
+#define NOT_IMPLEMENTED throw std::runtime_error("Not implemented");
+
 // make preprocessor stuff available 
 namespace scimitar {
 	enum class ePlatform {
@@ -123,6 +125,5 @@ namespace scimitar {
 
 #else
 	#error "not implemented"
-
 #endif
 }

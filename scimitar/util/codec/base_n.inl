@@ -5,16 +5,17 @@
 namespace scimitar::util::codec {
 	namespace detail {
 		template <size_t N>
-		requires(N < 128)
 		constexpr BaseN::BaseN(
 			const char(&text)[N],				      // null terminated string with le alphabet
 			bool       is_case_sensitive,
 			char       padding_character
-		) noexcept :
+		) noexcept:
 			m_Radix           (N - 1),
 			m_CaseSensitive   (is_case_sensitive),
 			m_PaddingCharacter(padding_character)
 		{
+			static_assert(N < 128);
+
 			// start everything at -2
 			fill(m_CharacterToInt, -2);
 
