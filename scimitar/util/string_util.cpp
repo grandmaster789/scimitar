@@ -1,5 +1,7 @@
 #include "string_util.h"
 
+#include <bit>
+
 namespace scimitar::util {
 	[[nodiscard]] constexpr bool is_upper(char c) noexcept {
 		return
@@ -159,5 +161,88 @@ namespace scimitar::util {
 		}
 
 		return result;
+	}
+
+	namespace traits {
+		constexpr bool ByteChar::eq_int_type(
+			int_type  a, 
+			int_type  b
+		) noexcept {
+			return (a == b);
+		}
+
+		constexpr ByteChar::char_type ByteChar::to_char_type(int_type  c) noexcept {
+			return static_cast<char_type>(c);
+		}
+
+		constexpr ByteChar::int_type  ByteChar::to_int_type(char_type c) noexcept {
+			return static_cast<int_type>(c);
+		}
+
+		constexpr ByteChar::int_type ByteChar::eof() noexcept {
+			return 0x0100;
+		}
+
+		constexpr ByteChar::int_type ByteChar::not_eof(int_type i) noexcept {
+			if (eq_int_type(i, eof()))
+				return 0;
+			else
+				return i;
+		}
+
+		ByteChar::char_type* ByteChar::assign(
+			char_type* buffer, 
+			size_t     count, 
+			char_type  value
+		) {
+			return std::bit_cast<char_type*>(std::memset(buffer, static_cast<int>(value), count));
+		}
+
+		ByteChar::char_type* ByteChar::move(
+			char_type*       dst, 
+			const char_type* src, 
+			size_t           count
+		) {
+			return std::bit_cast<char_type*>(std::memmove(dst, src, count));
+		}
+
+		ByteChar::char_type* ByteChar::copy(
+			char_type*       dst, 
+			const char_type* src, 
+			size_t           count
+		) {
+			return std::bit_cast<char_type*>(std::memcpy(dst, src, count));
+		}
+
+		size_t ByteChar::length(const char_type* buffer) {
+			return std::strlen(std::bit_cast<const char*>(buffer));
+		}
+
+		int ByteChar::compare(
+			const char_type* a, 
+			const char_type* b, 
+			size_t           count
+		) {
+			return std::memcmp(a, b, count);
+		}
+
+		const ByteChar::char_type* ByteChar::find(
+			const char_type* haystack,
+			size_t           count,
+			const char_type& needle
+		) {
+			return std::bit_cast<const char_type*>(std::memchr(
+				haystack,
+				static_cast<uint8_t>(needle),
+				count
+			));
+		}
+	}
+
+	ByteString toByteString(const std::string& src) noexcept {
+		return ByteString(
+			std::bit_cast<std::byte*>(src.data()), 
+			src.size()
+		);
 	}
 }

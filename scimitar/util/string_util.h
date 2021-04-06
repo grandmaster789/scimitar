@@ -39,6 +39,40 @@ namespace scimitar::util {
 		std::string_view haystack, 
 		const Ts&...     needles
 	) noexcept;
+
+	namespace traits {
+		// zero-terminated string of bytes
+		struct ByteChar {
+			using char_type  = std::byte;
+			using int_type   = unsigned int;
+			using state_type = std::mbstate_t;        // https://en.cppreference.com/w/cpp/string/multibyte/mbstate_t
+			using off_type   = std::streamoff;        // offset type
+			using pos_type   = std::fpos<state_type>; // position type
+
+			static inline constexpr void assign      (char_type& result, const char_type& value) noexcept;
+			static inline constexpr bool eq          (char_type a, char_type b) noexcept;
+
+			static constexpr bool      eq_int_type (int_type  a, int_type  b) noexcept;
+			static constexpr char_type to_char_type(int_type  c) noexcept; // may truncate
+			static constexpr int_type  to_int_type (char_type c) noexcept; // may truncate
+
+			static constexpr int_type eof    ()           noexcept;
+			static constexpr int_type not_eof(int_type i) noexcept;
+
+			static char_type* assign(char_type* buffer, size_t count, char_type value);		// memset
+			static char_type* move  (char_type* dst, const char_type* src, size_t count);	// memmove
+			static char_type* copy  (char_type* dst, const char_type* src, size_t count);	// memcpy
+
+			static size_t           length (const char_type* buffer);                                          // strlen
+			static int              compare(const char_type* a, const char_type* b, size_t count);             // memcmp
+			static const char_type* find   (const char_type* haystack, size_t count, const char_type& needle); // memchr
+		};
+	}
+
+	using ByteString     = std::basic_string<std::byte,      traits::ByteChar>;
+	using ByteStringView = std::basic_string_view<std::byte, traits::ByteChar>;
+
+	ByteString toByteString(const std::string& src) noexcept;
 }
 
 #include "string_util.inl"

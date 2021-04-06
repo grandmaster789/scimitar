@@ -8,7 +8,11 @@ add_executable(${UNIT_TEST}
 	"unittest.cpp"
 	"util/test_function.cpp"
 	"util/test_unique_resource.cpp"
- "util/test_stringutil.cpp" "util/test_endian.cpp" "util/test_biguint.cpp")
+	"util/test_stringutil.cpp" 
+	"util/test_endian.cpp" 
+	"util/test_biguint.cpp" 
+	"util/test_base_n.cpp"
+)
 
 find_package(GTest CONFIG REQUIRED)
 

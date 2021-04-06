@@ -55,4 +55,20 @@ namespace scimitar::util {
 
 		return result;
 	}
+
+	namespace traits {
+		inline constexpr void ByteChar::assign(
+			char_type& result,
+			const char_type& value
+		) noexcept {
+			result = value;
+		}
+
+		inline constexpr bool ByteChar::eq(
+			char_type a,
+			char_type b
+		) noexcept {
+			return (static_cast<uint8_t>(a) == static_cast<uint8_t>(b));
+		}
+	}
 }

@@ -113,7 +113,7 @@ namespace scimitar::util::codec {
 	}
 
 	template <detail::BaseN_Alphabet A, int C, int B>
-	static std::string BaseN<A, C, B>::encode(
+	std::string BaseN<A, C, B>::encode(
 		std::span<const std::byte> raw_bytes
 	) noexcept {
 		return encode(
@@ -167,7 +167,7 @@ namespace scimitar::util::codec {
 
 	template <detail::BaseN_Alphabet A, int C, int B>
 	template <typename tOutputIt>
-	static void BaseN<A, C, B>::encode_block(
+	void BaseN<A, C, B>::encode_block(
 		uint64_t  block,
 		uint64_t  num_bytes,
 		tOutputIt out
@@ -197,7 +197,7 @@ namespace scimitar::util::codec {
 
 	template <detail::BaseN_Alphabet A, int C, int B>
 	template <typename tOutputIt>
-	static void BaseN<A, C, B>::decode_block(
+	void BaseN<A, C, B>::decode_block(
 		uint64_t  block,
 		uint64_t  num_chars,
 		tOutputIt out
