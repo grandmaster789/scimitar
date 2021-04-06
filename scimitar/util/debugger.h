@@ -2,6 +2,7 @@
 
 #include "../preprocessor.h"
 #include <string_view>
+#include <fmt/format.h>
 
 #if SCIMITAR_OS == SCIMITAR_OS_WINDOWS
 	#define debug_break DebugBreak
@@ -31,7 +32,7 @@ namespace scimitar::util {
 	) noexcept;
 
 	template <typename... Ts>
-	void debugger_fatal(
+	[[noreturn]] no_inline void debugger_fatal(
 		const char*      source_file,
 		int              source_line,
 		std::string_view fmt,
@@ -39,6 +40,7 @@ namespace scimitar::util {
 	);
 }
 
-#define debugger_abort(...) ::scimitar::util::debugger_fatal(__FILE__, __LINE__ __VA_OPT__(, ) __VA_ARGS__)
-
 #include "debugger.inl"
+
+// sort of could use a __VA_OPT__(,) in here but failed to get it working
+#define debugger_abort(...) ::scimitar::util::debugger_fatal(__FILE__, __LINE__, __VA_ARGS__)

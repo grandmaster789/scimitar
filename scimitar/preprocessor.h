@@ -96,6 +96,34 @@
 
 #define NOT_IMPLEMENTED throw std::runtime_error("Not implemented");
 
+// compiler related
+#define SCIMITAR_COMPILER_MSVC  1
+#define SCIMITAR_COMPILER_CLANG 2
+#define SCIMITAR_COMPILER_GCC   3
+
+#if defined(_MSC_BUILD)
+	#define SCIMITAR_COMPILER SCIMITAR_COMPILER_MSVC
+
+	#define unreachable() __assume(0)
+	#define force_inline __forceinline
+	#define no_inline __declspec(noinline)
+#elif defined(__clang__)
+	#define SCIMITAR_COMPILER SCIMITAR_COMPILER_CLANG
+
+	#define unreachable()        __builtin_unreachable()
+	#define force_inline  inline __attribute__((always_inline))
+	#define no_inline            __attribute__((noinline))
+#elif defined(__GNUC__)
+	#define SCIMITAR_COMPILER SCIMITAR_COMPILER_GCC
+
+	// https://gcc.gnu.org/onlinedocs/gcc/Other-Builtins.html
+	#define unreachable()        __builtin_unreachable()
+	#define force_inline  inline __attribute__((always_inline))
+	#define no_inline            __attribute__((noinline))
+#else
+	#error "unsupported compiler"
+#endif
+
 // make preprocessor stuff available 
 namespace scimitar {
 	enum class ePlatform {
@@ -110,6 +138,14 @@ namespace scimitar {
 		arm = SCIMITAR_PROCESSOR_ARM,
 
 		current = SCIMITAR_PROCESSOR
+	};
+
+	enum class eCompiler {
+		msvc  = SCIMITAR_COMPILER_MSVC,
+		clang = SCIMITAR_COMPILER_CLANG,
+		gcc   = SCIMITAR_COMPILER_GCC,
+
+		current = SCIMITAR_COMPILER
 	};
 
 	constexpr bool has_SSE = (eProcessor::current == eProcessor::x64);

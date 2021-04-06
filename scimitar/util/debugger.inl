@@ -34,7 +34,14 @@ namespace scimitar::util {
 		std::string_view fmt,
 		Ts&&...          args
 	) {
-		std::string message = fmt::format(fmt, std::forward<Ts>(args)...);
+		std::string message;
+
+		if constexpr (sizeof...(Ts) == 0) {
+			message = fmt;
+		}
+		else {
+			message = fmt::format(fmt, std::forward<Ts>(args)...);
+		}
 
 		if (debugger_present()) {
 			debugger_log("{}:{} {}", source_file, source_line, message);

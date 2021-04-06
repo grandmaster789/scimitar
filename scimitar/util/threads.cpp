@@ -45,14 +45,44 @@ namespace scimitar::util {
 		DWORD_PTR process_mask;
 		DWORD_PTR system_mask;
 
+		// https://docs.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-getprocessaffinitymask
 		HANDLE handle = GetCurrentProcess();
 
 		if (!GetProcessAffinityMask(handle, &process_mask, &system_mask))
 			debugger_abort("Failed to get affinity mask");
+
+		// convert from DWORD_PTR to vector<bool>
+		std::vector<bool> result(64);
+
+		for (size_t i = 0; i < 64; ++i)
+			result[i] = static_cast<bool>(process_mask & (0x1ull << i));
+
+		return result;
 	}
 
 	std::vector<bool> set_thread_affinity_mask(const std::vector<bool>& mask) {
+		// convert from vector<bool> to DWORD_PTR
+		DWORD_PTR affinity_mask = 0;
+		
+		for (size_t i = 0; i < mask.size(); ++i)
+			if (mask[i])
+				affinity_mask |= (0x1ull << i);
 
+		// try and set the affinity mask
+		// https://docs.microsoft.com/en-us/windows/win32/api/winbase/nf-winbase-setthreadaffinitymask
+		HANDLE    handle   = GetCurrentProcess();
+		DWORD_PTR old_mask = SetThreadAffinityMask(handle, affinity_mask);
+
+		if (old_mask == 0)
+			throw std::runtime_error("Failed to set thread affinity");
+
+		// convert from DWORD_PTR to vector<bool>
+		std::vector<bool> result(64);
+
+		for (size_t i = 0; i < 64; ++i)
+			result[i] = static_cast<bool>(old_mask & (0x1ull << i));
+
+		return result;
 	}
 
 #else

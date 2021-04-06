@@ -55,8 +55,8 @@ namespace scimitar::util {
 		);
 
 		for (auto i = 0; i < sv.size(); ++i) {
-			auto piece = c_Base16::int_from_char<int>(sv[i]);
-			(*this) *= base;
+			auto piece = codec::Base16::int_from_char(sv[i]);
+			(*this) *= base;no
 			(*this) += piece;
 		}
 	}
