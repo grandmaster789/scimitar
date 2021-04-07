@@ -24,12 +24,12 @@ namespace test {
 		}
 
 		{
-			auto spliced = split("foo/bar/baz", "/b");
+			auto spliced = split("foo/bar/baz", "/");
 
 			std::vector<std::string> expected = {
 				"foo",
-				"ar",
-				"az"
+				"bar",
+				"baz"
 			};
 
 			ASSERT_EQ(spliced, expected);

@@ -3,6 +3,9 @@
 #include "../algorithm.h"
 #include "../cast.h"
 
+#include <cassert>
+#include <bit>
+
 namespace scimitar::util::codec::detail {
 	template <size_t N>
 	constexpr BaseN_Alphabet::BaseN_Alphabet(
@@ -53,6 +56,18 @@ namespace scimitar::util::codec::detail {
 					m_CharacterToInt[(c - 'A') + 'a'] = static_cast<int8_t>(i);
 			}
 		}
+	}
+
+	inline constexpr char BaseN_Alphabet::from_int(int8_t x) const noexcept {
+		assert(x < m_Radix);
+
+		return m_IntToCharacter[x];
+	}
+
+	inline constexpr int8_t BaseN_Alphabet::from_char(char c) const noexcept {
+		// was getting weird warnings C28020 here?
+		//return m_CharacterToInt[c];
+		return m_CharacterToInt[std::bit_cast<uint8_t>(c)];
 	}
 }
 

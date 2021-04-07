@@ -5,6 +5,8 @@
 #include <vector>
 #include <utility>
 
+#include "concepts.h"
+
 namespace scimitar::util {
 	[[nodiscard]] constexpr bool is_upper        (char c) noexcept; // A-Z
 	[[nodiscard]] constexpr bool is_lower        (char c) noexcept; // a-z
@@ -24,6 +26,9 @@ namespace scimitar::util {
 	[[nodiscard]] std::string to_lower           (std::string_view sv) noexcept;
 	[[nodiscard]] std::string to_upper           (std::string_view sv) noexcept;
 	[[nodiscard]] std::string normalize_linefeeds(std::string_view sv) noexcept; // get rid of all line feeds except for \n
+
+	inline constexpr size_t string_size(cSize auto str) noexcept;
+	inline constexpr size_t string_size(      auto str) noexcept;
 
 	// search the haystack for all needles, return the first matched range
 	template <typename T, typename... Ts>

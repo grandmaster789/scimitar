@@ -58,7 +58,7 @@ add_library(${SCIMITAR_LIB} STATIC
 	"util/debugger.cpp" 
 	"util/concepts.h" 
 	"util/codec/base_n.h"
-	"util/codec/base_n.cpp"
+	
 	"util/codec/codepage_1252.h" 
 	"util/codec/codepage_1252.cpp"
 	"util/codec/utf.h" 

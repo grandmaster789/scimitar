@@ -3,6 +3,14 @@
 #include "string_util.h"
 
 namespace scimitar::util {
+	inline constexpr size_t string_size(cSize auto str) noexcept {
+		return size(str);
+	}
+
+	inline constexpr size_t string_size(auto str) noexcept {
+		return 1;
+	}
+
 	template <typename T, typename... Ts>
 	[[nodiscard]] std::pair<size_t, size_t> find_first_string(
 		std::string_view haystack,
@@ -11,11 +19,11 @@ namespace scimitar::util {
 		const Ts&...     needle_tail
 	) noexcept {
 		size_t first = haystack.find(needle_head, offset); // https://en.cppreference.com/w/cpp/string/basic_string_view/find
-		size_t last  = first + std::size(needle_head);
+		size_t last  = first + string_size(needle_head);
 
 		if (first == std::string_view::npos) {
-			first = std::size(haystack);
-			last  = std::size(haystack);
+			first = haystack.size();
+			last  = haystack.size();
 		}
 
 		if constexpr (sizeof...(Ts) != 0) {
@@ -41,16 +49,16 @@ namespace scimitar::util {
 	) noexcept {
 		std::vector<std::string> result;
 
-		std::string_view::size_type cursor = 0;
+		size_t cursor = 0;
 
-		while (cursor != std::size(haystack)) {
+		while (cursor < haystack.size()) {
 			const auto [x, y] = find_first_string(haystack, cursor, needles...);
 
-			result.emplace_back(
-				haystack.substr(cursor, x - cursor)
-			);
-
+			std::string token{ haystack.substr(cursor, x - cursor) };
 			cursor = y;
+
+			if (!token.empty())
+				result.push_back(std::move(token));
 		}
 
 		return result;

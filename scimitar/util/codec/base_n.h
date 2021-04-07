@@ -34,8 +34,8 @@ namespace scimitar::util::codec::detail {
 			char       padding_character = '\0'	   // explicit padding characters are really only required for base64
 		) noexcept;
 
-		constexpr char   from_int (int8_t x) const noexcept;
-		constexpr int8_t from_char(char c)   const noexcept;
+		inline constexpr char   from_int (int8_t x) const noexcept;
+		inline constexpr int8_t from_char(char c)   const noexcept;
 	};
 }
 
