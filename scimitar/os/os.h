@@ -31,6 +31,25 @@ namespace scimitar {
 			bool m_Fullscreen = false;
 		} m_WindowSettings;
 
-		vk::UniqueInstance m_VkInstance;
+		void destroySurfaceKHR(vk::SurfaceKHR surface);
+
+		static VkBool32 debug_callback(
+			      VkDebugUtilsMessageSeverityFlagBitsEXT severity,
+			      VkDebugUtilsMessageTypeFlagsEXT        type,
+			const VkDebugUtilsMessengerCallbackDataEXT*  data,
+			void*                                        userdata
+		);
+
+		vk::UniqueInstance               m_VkInstance;
+		vk::DispatchLoaderDynamic        m_VkLoader;
+		vk::UniqueDebugUtilsMessengerEXT m_VkDebugMessager;
+
+		// requirements
+		std::vector<const char*>   m_RequiredInstanceExtensions;
+		std::vector<const char*>   m_RequiredInstanceLayers;
+		vk::PhysicalDeviceFeatures m_RequiredDeviceFeatures;
+		vk::PhysicalDeviceLimits   m_RequiredDeviceLimits;
+
+
 	};
 }

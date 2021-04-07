@@ -80,9 +80,16 @@
 	#error "Could not detect processor"
 #endif
 
+// Build types
+#define SCIMITAR_BUILD_DEBUG   1
+#define SCIMITAR_BUILD_RELEASE 2
+
 // with MSVC we can figure out wheter this is a debug build
 #ifdef _DEBUG
-	#define SCIMITAR_DEBUG
+	#define SCIMITAR_BUILD SCIMITAR_BUILD_DEBUG
+#else
+	// assume release build in other cases
+	#define SCIMITAR_BUILD SCIMITAR_BUILD_RELEASE
 #endif
 
 // NO_MINMAX should mean that these are not defined, but just in case
@@ -146,6 +153,13 @@ namespace scimitar {
 		gcc   = SCIMITAR_COMPILER_GCC,
 
 		current = SCIMITAR_COMPILER
+	};
+
+	enum class eBuild {
+		debug   = SCIMITAR_BUILD_DEBUG,
+		release = SCIMITAR_BUILD_RELEASE,
+
+		current = SCIMITAR_BUILD
 	};
 
 	constexpr bool has_SSE = (eProcessor::current == eProcessor::x64);

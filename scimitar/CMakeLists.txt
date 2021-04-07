@@ -15,35 +15,41 @@ add_library(${SCIMITAR_LIB} STATIC
 	"dependencies.h" 
 	"dependencies.cpp"
 	"preprocessor.h" 
+	
 	"app/application.h" 
 	"app/application.cpp"
+
 	"core/engine.h"
 	"core/engine.cpp"
 	"core/mediator.h" 
 	"core/system.h"
 	"core/system.cpp"
 	"core/detail/mediator_queue.h" 
+
 	"gui/widget.h" 
+
 	"os/os.h" 
 	"os/os.cpp"
-	"os/vsync.h"
 	"os/window.h"
 	"os/window.cpp"
+
 	"input/input.cpp" 
 	"input/input.h" 
 	"input/keyboard.h" 
 	"input/keyboard.cpp" 
 	"input/mouse.h" 
 	"input/mouse.cpp" 
+
 	"math/helpers.h" 
+
 	"renderer/renderer.h" 
 	"renderer/renderer.cpp" 
+
 	"util/algorithm.h"
 	"util/biguint.h"
 	"util/cast.h"
 	"util/endian.h" 
 	"util/function.h" 
-	"util/highres_clock.h" 
 	"util/literals.h" 
 	"util/memory.h"
 	"util/spin_mutex.h" 
@@ -58,9 +64,8 @@ add_library(${SCIMITAR_LIB} STATIC
 	"util/debugger.cpp" 
 	"util/concepts.h" 
 	"util/codec/base_n.h"
-	
 	"util/codec/codepage_1252.h" 
-	"util/codec/codepage_1252.cpp"
+	"util/codec/codepage_1252.inl"
 	"util/codec/utf.h" 
 	"util/codec/utf.cpp"
 )

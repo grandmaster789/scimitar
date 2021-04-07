@@ -44,3 +44,4 @@ namespace scimitar::util {
 
 // sort of could use a __VA_OPT__(,) in here but failed to get it working
 #define debugger_abort(...) ::scimitar::util::debugger_fatal(__FILE__, __LINE__, __VA_ARGS__)
+#define debugger_log(...) ::scimitar::util::debugger_log(__VA_ARGS__)

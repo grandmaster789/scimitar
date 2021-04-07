@@ -3,7 +3,7 @@
 #include <cstdint>
 
 namespace scimitar::util {
-	[[nodiscard]] constexpr char32_t codepage1252_to_utf32(char c) noexcept {
+	inline constexpr char32_t codepage1252_to_utf32(char c) noexcept {
 		uint8_t x = static_cast<uint8_t>(c);
 
 		if (x <= 0x7F)
