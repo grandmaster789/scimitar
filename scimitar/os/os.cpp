@@ -5,6 +5,22 @@
 #include "../preprocessor.h"
 
 namespace {
+	void listInstanceExtensions() {
+		auto exts = vk::enumerateInstanceExtensionProperties();
+
+		debugger_log("Available Vulkan instance extensions ({}):", exts.size());
+		for (const auto& prop : exts)
+			debugger_log("\t{}", prop.extensionName);
+	}
+
+	void listInstanceLayers() {
+		auto layers = vk::enumerateInstanceLayerProperties();
+
+		debugger_log("Available Vulkan instance layers ({}): ", layers.size());
+		for (const auto& layer : layers)
+			debugger_log("\t{}", layer.layerName);
+	}
+
 	bool checkInstanceExtensions(const std::vector<const char*>& reqs) {
 		using scimitar::util::contains_if;
 
@@ -89,6 +105,9 @@ namespace scimitar {
 
 	void OS::init() {
 		System::init();
+
+		listInstanceExtensions();
+		listInstanceLayers();
 
 		createWindow(
 			"Scimitar", 
@@ -204,7 +223,7 @@ namespace scimitar {
 	) {
 		switch (severity) {
 		case VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT:
-			// std::cout("Vulkan: {}", pCallbackData->pMessage);
+			// debugger_log("Vulkan: {}", pCallbackData->pMessage);
 			break;
 
 		case VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT: 
