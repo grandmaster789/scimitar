@@ -2,7 +2,7 @@
 #include "../util/algorithm.h"
 #include "../util/debugger.h"
 #include "../core/engine.h"
-#include "../preprocessor.h"
+#include "../dependencies.h"
 
 namespace {
 	void listInstanceExtensions() {
@@ -128,6 +128,10 @@ namespace scimitar {
 				VK_KHR_SURFACE_EXTENSION_NAME
 			};
 
+			if constexpr (ePlatform::current == ePlatform::windows) {
+				m_RequiredInstanceExtensions.push_back(VK_KHR_WIN32_SURFACE_EXTENSION_NAME);
+			}
+
 			if constexpr (
 				(ePlatform::current == ePlatform::windows) &&
 				(eBuild   ::current == eBuild   ::debug)
@@ -181,6 +185,9 @@ namespace scimitar {
 
 			m_VkDebugMessager = m_VkInstance->createDebugUtilsMessengerEXTUnique(info);
 		}
+
+		for (auto physical : m_VkInstance->enumeratePhysicalDevices())
+			m_PhysicalDevices.push_back(std::make_unique<PhysicalDevice>(*this, physical));
 	}
 
 	void OS::update() {

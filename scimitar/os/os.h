@@ -7,6 +7,7 @@
 
 #include "../core/system.h"
 #include "window.h"
+#include "render_device.h"
 
 namespace scimitar {
 	class OS :
@@ -31,8 +32,6 @@ namespace scimitar {
 			bool m_Fullscreen = false;
 		} m_WindowSettings;
 
-		void destroySurfaceKHR(vk::SurfaceKHR surface);
-
 		static VkBool32 debug_callback(
 			      VkDebugUtilsMessageSeverityFlagBitsEXT severity,
 			      VkDebugUtilsMessageTypeFlagsEXT        type,
@@ -50,6 +49,6 @@ namespace scimitar {
 		vk::PhysicalDeviceFeatures m_RequiredDeviceFeatures;
 		vk::PhysicalDeviceLimits   m_RequiredDeviceLimits;
 
-
+		std::vector<std::unique_ptr<RenderDevice>> m_Devices;
 	};
 }
