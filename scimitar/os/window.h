@@ -1,5 +1,8 @@
 #pragma once
 
+#include "render_surface.h"
+#include <memory>
+
 namespace scimitar::os {
 	class Window {
 	public:
@@ -22,5 +25,7 @@ namespace scimitar::os {
 		int  m_Width      = 1280;
 		int  m_Height     = 720;
 		bool m_Fullscreen = false;
+
+		std::unique_ptr<RenderSurface> m_Surface;
 	};
 }

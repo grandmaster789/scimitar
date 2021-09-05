@@ -105,10 +105,10 @@ namespace scimitar {
             Keyboard             (Keyboard&&)                 = delete;
             Keyboard& operator = (Keyboard&&) = delete;
 
-            bool isDown(eKey key) const;
-            bool isUp  (eKey key) const;
+            bool is_down(eKey key) const;
+            bool is_up  (eKey key) const;
 
-            void setKeyState(eKey key, bool pressed);
+            void set_state(eKey key, bool pressed);
 
             // --------------------- Events -----------------------
             struct OnKeyPressed {

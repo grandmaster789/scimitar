@@ -10,6 +10,8 @@
     "cppcoro",
     "nlohmann-json",
     "tinyobjloader",
-    "fmt"
+    "vulkan",
+    "vulkan-memory-allocator",
+    "gcem"
   ]
 }

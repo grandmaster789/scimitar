@@ -29,7 +29,7 @@ namespace scimitar::util::codec::detail {
 		);
 
 		// start everything at -2
-		fill(m_CharacterToInt, -2);
+		fill(m_CharacterToInt, static_cast<int8_t>(-2));
 
 		// whitespace should be marked -1
 		m_CharacterToInt[' ']  = -1;
@@ -196,11 +196,11 @@ namespace scimitar::util::codec {
 			block /= c_Radix;
 
 			if (i < padding) {
-				if (c_PaddingCharacter)
+				if constexpr (c_PaddingCharacter != '\0')
 					str += c_PaddingCharacter;
 			}
 			else
-				str += char_from_int(value);
+				str += char_from_int(static_cast<int8_t>(value));
 		}
 
 		std::copy(

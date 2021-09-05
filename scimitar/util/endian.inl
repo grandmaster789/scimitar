@@ -41,17 +41,18 @@ namespace scimitar::util {
 		if constexpr (sizeof(T) == sizeof(uint16_t)) {
 			return static_cast<T>(__builtin_bswap16(static_cast<uint16_t>(value)));
 		}
-#endif
+#else
 		// fall back to algorithmic approach
 		T result;
 
 		const std::byte* src = reinterpret_cast<const std::byte*>(&value);
-		      std::byte* dst = reinterpret_cast<      std::byte*>(&result);
+		std::byte* dst = reinterpret_cast<std::byte*>(&result);
 
 		for (size_t i = 0; i < sizeof(T); ++i)
 			dst[i] = src[sizeof(T) - i - 1];
 
 		return result;
+#endif
 	}
 
 	template <cSigned T>

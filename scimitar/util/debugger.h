@@ -2,7 +2,6 @@
 
 #include "../preprocessor.h"
 #include <string_view>
-#include <fmt/format.h>
 
 #if SCIMITAR_OS == SCIMITAR_OS_WINDOWS
 	#define debug_break DebugBreak

@@ -18,14 +18,14 @@ namespace scimitar {
         System::shutdown();
     }
 
-    void Input::registerDevice(Keyboard* kbd) {
+    void Input::register_device(Keyboard* kbd) {
         if (!util::contains(m_Keyboards, kbd))
             m_Keyboards.push_back(kbd);
         else
             std::cout << "Duplicate keyboard registration, discarding...\n";
     }
 
-    void Input::unregisterDevice(Keyboard* kbd) {
+    void Input::unregister_device(Keyboard* kbd) {
         auto it = util::find(m_Keyboards, kbd);
 
         if (it != std::end(m_Keyboards))
@@ -34,14 +34,14 @@ namespace scimitar {
             std::cout << "Cannot unregister unlisted keyboard, ignoring...";
     }
 
-    void Input::registerDevice(Mouse* m) {
+    void Input::register_device(Mouse* m) {
         if (!util::contains(m_Mice, m))
             m_Mice.push_back(m);
         else
             std::cout << "Duplicate mouse registration, discarding...";
     }
 
-    void Input::unregisterDevice(Mouse* m) {
+    void Input::unregister_device(Mouse* m) {
         auto it = util::find(m_Mice, m);
 
         if (it != std::end(m_Mice))
@@ -50,11 +50,11 @@ namespace scimitar {
             std::cout << "Cannot unregister unlisted mouse, ignoring...";
     }
 
-    const std::vector<Input::Keyboard*>& Input::getKeyboards() const {
+    const std::vector<Input::Keyboard*>& Input::get_keyboards() const {
         return m_Keyboards;
     }
 
-    const std::vector<Input::Mouse*>& Input::getMice() const {
+    const std::vector<Input::Mouse*>& Input::get_mice() const {
         return m_Mice;
     }
 }  // namespace scimitar

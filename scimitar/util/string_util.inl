@@ -7,7 +7,7 @@ namespace scimitar::util {
 		return size(str);
 	}
 
-	inline constexpr size_t string_size(auto str) noexcept {
+	inline constexpr size_t string_size(auto) noexcept {
 		return 1;
 	}
 

@@ -7,7 +7,7 @@
 namespace scimitar::util {
 	// container for weak pointers to unique types, with type-based lookup
 	// expecting pretty small map sizes - implemented as flat map with linear probing
-	class Typemap {
+	class TypeMap {
 	public:
 		template <typename T>
 		void insert(T* ptr); // throws if type is already present

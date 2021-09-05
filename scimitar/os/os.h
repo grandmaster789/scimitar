@@ -3,7 +3,7 @@
 #include <memory>
 #include <vector>
 
-#include <vulkan/vulkan.hpp>
+#include "../dependencies.h"
 
 #include "../core/system.h"
 #include "window.h"
@@ -20,10 +20,16 @@ namespace scimitar {
 		void update()   override; // by default, stop the engine when all windows are closed
 		void shutdown() override;
 
-		os::Window* createWindow(const std::string& title, int width, int height);
+		os::Window* create_window(const std::string& title, int width, int height);
+
+		const vk::Instance& get_vk_instance() const noexcept;
 
 	private:
-		using WindowPtr = std::unique_ptr<os::Window>;
+		using RenderDevice = os::RenderDevice;
+		using Window       = os::Window;
+
+		using WindowPtr = std::unique_ptr<Window>;
+		
 		std::vector<WindowPtr> m_Windows;
 
 		struct WindowSettings {
@@ -49,6 +55,6 @@ namespace scimitar {
 		vk::PhysicalDeviceFeatures m_RequiredDeviceFeatures;
 		vk::PhysicalDeviceLimits   m_RequiredDeviceLimits;
 
-		std::vector<std::unique_ptr<RenderDevice>> m_Devices;
+		std::vector<std::unique_ptr<RenderDevice>> m_RenderDevices;
 	};
 }

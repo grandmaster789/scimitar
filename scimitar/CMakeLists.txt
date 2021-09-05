@@ -26,12 +26,27 @@ add_library(${SCIMITAR_LIB} STATIC
 	"core/system.cpp"
 	"core/detail/mediator_queue.h" 
 
+	"geometry/extent_2d.h" 
+	"geometry/extent_2d.cpp"
+	"geometry/aa_rectangle.h" 
+	"geometry/aa_rectangle.cpp" 
+	"geometry/point_2d.h"
+	"geometry/point_2d.cpp"
+	"geometry/direction_2d.h" 
+	"geometry/direction_2d.cpp" 
+
 	"gui/widget.h" 
 
 	"os/os.h" 
 	"os/os.cpp"
 	"os/window.h"
 	"os/window.cpp"
+	"os/render_device.h" 
+	"os/render_device.cpp"
+	"os/render_surface.h"
+	"os/render_surface.cpp" 
+	"os/gpu_queue.h"
+	"os/gpu_queue.cpp"
 
 	"input/input.cpp" 
 	"input/input.h" 
@@ -68,14 +83,13 @@ add_library(${SCIMITAR_LIB} STATIC
 	"util/codec/codepage_1252.inl"
 	"util/codec/utf.h" 
 	"util/codec/utf.cpp"
- "os/render_device.h")
+)
 
 # vcpkg dependencies
 find_package(nlohmann_json CONFIG REQUIRED)
 find_package(tinyobjloader REQUIRED)
 find_package(Microsoft.GSL CONFIG REQUIRED)
 find_package(unofficial-concurrentqueue CONFIG REQUIRED)
-find_package(fmt CONFIG REQUIRED)
 
 # vulkan and shaderc are part of the Vulkan SDK 
 find_package(Vulkan REQUIRED)
@@ -85,7 +99,6 @@ target_link_libraries(${SCIMITAR_LIB}
 PUBLIC
 	Vulkan::Vulkan
 	Microsoft.GSL::GSL
-	fmt::fmt
 
 PRIVATE
 	nlohmann_json

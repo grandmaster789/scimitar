@@ -19,7 +19,7 @@ namespace scimitar {
 
         class Mouse {
         public:
-            using Window = graphics::Window;
+            using Window = os::Window;
 
             enum class eButton
             {
@@ -36,18 +36,18 @@ namespace scimitar {
             Mouse             (Mouse&&)      = delete;
             Mouse& operator = (Mouse&&)      = delete;
 
-            bool isDown(eButton button) const;
-            bool isUp(eButton button) const;
+            bool is_down(eButton button) const;
+            bool is_up(eButton button) const;
 
-            std::pair<float, float> getPosition() const;
+            std::pair<float, float> get_position() const;
 
-            void setButtonState(eButton button, bool pressed);
-            void setPosition(float x, float y);
+            void set_state(eButton button, bool pressed);
+            void set_position(float x, float y);
 
-            void doDoubleClick(eButton button);
-            void doScroll(int amount);
-            void doEnter(Window* w);
-            void doLeave(Window* w);
+            void do_double_click(eButton button);
+            void do_scroll(int amount);
+            void do_enter(Window* w);
+            void do_leave(Window* w);
 
             // --------------------- Events -----------------------
             struct OnMoved {

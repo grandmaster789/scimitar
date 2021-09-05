@@ -61,7 +61,7 @@ namespace scimitar::util {
 	);
 
 	template <typename tIteratorA, typename tIteratorB>
-	[[nodiscard]] constexpr tIteratorA find_any_of(
+	constexpr tIteratorA find_any_of(
 		tIteratorA haystack_first,
 		tIteratorA haystack_last,
 		tIteratorB needles_first,
@@ -75,7 +75,7 @@ namespace scimitar::util {
 	void uniquify(tContainer& c); // eliminates duplicate values from a container (also sorts it)
 
 	template <typename T, typename U>
-	[[nodiscard]] bool assign_if_changed(T& old_value, U&& new_value) noexcept; // returns true if the value was changed
+	bool assign_if_changed(T& old_value, U&& new_value) noexcept; // returns true if the value was changed
 
 	template <
 		typename tContainerA,
@@ -96,8 +96,6 @@ namespace scimitar::util {
 		typename tFunctor // fn(size_t) -> T
 	>
 	constexpr std::array<T, N> generate_array(tFunctor fn);
-
-
 }
 
 #include "algorithm.inl"

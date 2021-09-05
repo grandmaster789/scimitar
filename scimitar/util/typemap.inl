@@ -5,7 +5,7 @@
 
 namespace scimitar::util {
 	template <typename T>
-	void Typemap::insert(T* ptr) {
+	void TypeMap::insert(T* ptr) {
 		std::type_index key(typeid(T));
 
 		if (!contains(m_Keys, key)) {
@@ -17,7 +17,7 @@ namespace scimitar::util {
 	}
 
 	template <typename T>
-	void Typemap::remove(T* ptr) {
+	void TypeMap::remove(T* ptr) {
 		std::type_index key(typeid(T));
 
 		auto it = find(m_Keys, key);
@@ -33,7 +33,7 @@ namespace scimitar::util {
 	}
 
 	template <typename T>
-	T* Typemap::get() const {
+	T* TypeMap::get() const {
 		std::type_index key(typeid(T));
 		auto it = find(m_Keys, key);
 

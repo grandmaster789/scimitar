@@ -11,12 +11,12 @@
 
 namespace scimitar::math {
 	template <typename T>
-	T square(T value) noexcept {
+	constexpr T square(T value) noexcept {
 		return value * value;
 	}
 
 	template <typename T>
-	T cubed(T value) noexcept {
+	constexpr T cubed(T value) noexcept {
 		return value * value * value;
 	}
 

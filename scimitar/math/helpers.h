@@ -1,11 +1,17 @@
 #pragma once
 
+/*
+*	additional math libraries:
+*		vectorclass		(for vectorized operations)		https://raw.githubusercontent.com/vectorclass/manual/master/vcl_manual.pdf
+*		gcem			(for additional constexpr math) https://gcem.readthedocs.io/en/latest/
+*/
+
 namespace scimitar::math {
 	template <typename T>
-	T square(T value) noexcept;
+	constexpr T square(T value) noexcept;
 
 	template <typename T>
-	T cubed(T value) noexcept;
+	constexpr T cubed(T value) noexcept;
 
 	// https://en.wikipedia.org/wiki/Smoothstep
 	template <std::floating_point T>

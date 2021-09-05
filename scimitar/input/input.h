@@ -27,14 +27,14 @@ namespace scimitar {
         void update()   override;
         void shutdown() override;
 
-        void registerDevice  (Keyboard* kbd);
-        void unregisterDevice(Keyboard* kbd);
+        void register_device  (Keyboard* kbd);
+        void unregister_device(Keyboard* kbd);
 
-        void registerDevice  (Mouse* m);
-        void unregisterDevice(Mouse* m);
+        void register_device  (Mouse* m);
+        void unregister_device(Mouse* m);
 
-        const std::vector<Keyboard*>& getKeyboards() const;
-        const std::vector<Mouse*>&    getMice()      const;
+        const std::vector<Keyboard*>& get_keyboards() const;
+        const std::vector<Mouse*>&    get_mice()      const;
 
     private:
         std::vector<Keyboard*> m_Keyboards;

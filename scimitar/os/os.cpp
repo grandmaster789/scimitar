@@ -3,9 +3,10 @@
 #include "../util/debugger.h"
 #include "../core/engine.h"
 #include "../dependencies.h"
+#include "render_device.h"
 
 namespace {
-	void listInstanceExtensions() {
+	void list_instance_extensions() {
 		auto exts = vk::enumerateInstanceExtensionProperties();
 
 		debugger_log("Available Vulkan instance extensions ({}):", exts.size());
@@ -13,7 +14,7 @@ namespace {
 			debugger_log("\t{}", prop.extensionName);
 	}
 
-	void listInstanceLayers() {
+	void list_instance_layers() {
 		auto layers = vk::enumerateInstanceLayerProperties();
 
 		debugger_log("Available Vulkan instance layers ({}): ", layers.size());
@@ -21,7 +22,7 @@ namespace {
 			debugger_log("\t{}", layer.layerName);
 	}
 
-	bool checkInstanceExtensions(const std::vector<const char*>& reqs) {
+	bool check_instance_extensions(const std::vector<const char*>& reqs) {
 		using scimitar::util::contains_if;
 
 		auto available = vk::enumerateInstanceExtensionProperties();
@@ -38,7 +39,7 @@ namespace {
 		return true;
 	}
 
-	bool checkInstanceLayers(const std::vector<const char*>& reqs) {
+	bool check_instance_iayers(const std::vector<const char*>& reqs) {
 		using scimitar::util::contains_if;
 
 		auto available = vk::enumerateInstanceLayerProperties();
@@ -55,8 +56,6 @@ namespace {
 		return true;
 	}
 }
-
-inline PFN_vkDestroyDebugUtilsMessengerEXT impl_vkDestroyDebugUtilsMessengerEXT;
 
 VkResult vkCreateDebugUtilsMessengerEXT(
 	VkInstance                                instance, 
@@ -106,10 +105,10 @@ namespace scimitar {
 	void OS::init() {
 		System::init();
 
-		listInstanceExtensions();
-		listInstanceLayers();
+		list_instance_extensions();
+		list_instance_layers();
 
-		createWindow(
+		create_window(
 			"Scimitar", 
 			m_WindowSettings.m_Width,
 			m_WindowSettings.m_Height
@@ -145,16 +144,16 @@ namespace scimitar {
 				m_RequiredDeviceFeatures.robustBufferAccess = VK_TRUE;
 			}
 
-			if (!checkInstanceExtensions(m_RequiredInstanceExtensions))
+			if (!check_instance_extensions(m_RequiredInstanceExtensions))
 				throw std::runtime_error("Not all required Vulkan instance extensions are available");
-			if (!checkInstanceLayers(m_RequiredInstanceLayers))
+			if (!check_instance_iayers(m_RequiredInstanceLayers))
 				throw std::runtime_error("Not all required Vulkan instance layers are available");
 
 			vk::InstanceCreateInfo ici;
 			ici.setPApplicationInfo      (&ai);
-			ici.setEnabledExtensionCount (m_RequiredInstanceExtensions.size());
+			ici.setEnabledExtensionCount (static_cast<uint32_t>(m_RequiredInstanceExtensions.size()));
 			ici.setPEnabledExtensionNames(m_RequiredInstanceExtensions);
-			ici.setEnabledLayerCount     (m_RequiredInstanceLayers.size());
+			ici.setEnabledLayerCount     (static_cast<uint32_t>(m_RequiredInstanceLayers.size()));
 			ici.setPEnabledLayerNames    (m_RequiredInstanceLayers);
 
 			m_VkInstance = vk::createInstanceUnique(ici);
@@ -187,7 +186,7 @@ namespace scimitar {
 		}
 
 		for (auto physical : m_VkInstance->enumeratePhysicalDevices())
-			m_PhysicalDevices.push_back(std::make_unique<PhysicalDevice>(*this, physical));
+			m_RenderDevices.push_back(std::make_unique<RenderDevice>(this, physical));
 	}
 
 	void OS::update() {
@@ -206,7 +205,7 @@ namespace scimitar {
 		System::shutdown();
 	}
 
-	os::Window* OS::createWindow(
+	os::Window* OS::create_window(
 		const std::string& title, 
 		int                width, 
 		int                height
@@ -222,12 +221,19 @@ namespace scimitar {
 		return m_Windows.back().get();
 	}
 
+	const vk::Instance& OS::get_vk_instance() const noexcept {
+		return m_VkInstance.get();
+	}
+
 	VkBool32 OS::debug_callback(
 		VkDebugUtilsMessageSeverityFlagBitsEXT      severity,
 		VkDebugUtilsMessageTypeFlagsEXT             type,
 		const VkDebugUtilsMessengerCallbackDataEXT* data,
 		void*                                       userdata
 	) {
+		(void)type;
+		(void)userdata;
+
 		switch (severity) {
 		case VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT:
 			// debugger_log("Vulkan: {}", pCallbackData->pMessage);

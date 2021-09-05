@@ -8,23 +8,23 @@ namespace scimitar::input {
     Keyboard::Keyboard(Input* manager): 
         m_Manager(manager) 
     {
-        m_Manager->registerDevice(this);
+        m_Manager->register_device(this);
     }
 
     Keyboard::~Keyboard() {
-        m_Manager->unregisterDevice(this);
+        m_Manager->unregister_device(this);
     }
 
-    bool Keyboard::isDown(eKey key) const {
+    bool Keyboard::is_down(eKey key) const {
         return m_Keys[static_cast<std::underlying_type_t<eKey>>(key)];
     }
 
-    bool Keyboard::isUp(eKey key) const {
-        return !isDown(key);
+    bool Keyboard::is_up(eKey key) const {
+        return !is_down(key);
     }
 
-    void Keyboard::setKeyState(eKey key, bool isPressed) {
-        bool current = isDown(key);
+    void Keyboard::set_state(eKey key, bool isPressed) {
+        bool current = is_down(key);
 
         if (current != isPressed) {
             m_Keys[static_cast<std::underlying_type_t<eKey>>(key)] = isPressed;

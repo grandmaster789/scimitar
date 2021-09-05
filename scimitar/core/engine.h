@@ -54,7 +54,7 @@ namespace scimitar::core {
 		std::atomic_bool m_Running = false;
 
 		std::vector<SystemPtr> m_Systems;
-		util::Typemap          m_SystemMap;
+		util::TypeMap          m_SystemMap;
 		ApplicationPtr         m_Application;
 
 		std::vector<std::string> m_InitOrder; // so that cleanup can be done in reverse

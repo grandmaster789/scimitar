@@ -91,7 +91,7 @@ namespace scimitar::util {
 	}
 
 	template <typename tIteratorA, typename tIteratorB>
-	[[nodiscard]] constexpr tIteratorA find_any_of(
+	constexpr tIteratorA find_any_of(
 		tIteratorA haystack_first,
 		tIteratorA haystack_last,
 		tIteratorB needles_first,
@@ -134,9 +134,9 @@ namespace scimitar::util {
 			std::end(c)
 		);
 	}
-
+	
 	template <typename T, typename U>
-	[[nodiscard]] bool assign_if_changed(T& old_value, U&& new_value) noexcept {
+	bool assign_if_changed(T& old_value, U&& new_value) noexcept {
 		if (old_value == new_value)
 			return false;
 

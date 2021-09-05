@@ -1,7 +1,7 @@
 #pragma once
 
 #include "debugger.h"
-#include <fmt/format.h>
+#include <format>
 #include <cstdlib>
 
 namespace scimitar::util {
@@ -11,7 +11,7 @@ namespace scimitar::util {
 		Ts&&...          args
 	) noexcept {
 		debugger_log(
-			fmt::format(fmt, std::forward<Ts>(args)...).data()
+			std::format(fmt, std::forward<Ts>(args)...).data()
 		);
 	}
 
@@ -23,7 +23,7 @@ namespace scimitar::util {
 	) noexcept {
 		debugger_dialog(
 			caption,
-			fmt::format(fmt, std::forward<Ts>(args)...).data()
+			std::format(fmt, std::forward<Ts>(args)...).data()
 		);
 	}
 
@@ -40,7 +40,7 @@ namespace scimitar::util {
 			message = fmt;
 		}
 		else {
-			message = fmt::format(fmt, std::forward<Ts>(args)...);
+			message = std::format(fmt, std::forward<Ts>(args)...);
 		}
 
 		if (debugger_present()) {

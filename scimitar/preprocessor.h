@@ -1,5 +1,7 @@
 #pragma once
 
+// some more information about architecture and platform macros can be found here: https://abseil.io/docs/cpp/platforms/macros
+
 // lay down some constants
 #define SCIMITAR_PLATFORM_WINDOWS 1
 #define SCIMITAR_PLATFORM_LINUX 2
@@ -164,6 +166,12 @@ namespace scimitar {
 
 	constexpr bool has_SSE = (eProcessor::current == eProcessor::x64);
 	
+	// try to figure out in more detail which instructions are actually available
+	// most of the architecture flags are handled at the project root CMakeLists.txt
+#if SCIMITAR_PROCESSOR == SCIMITAR_PROCESSOR_X64
+
+#endif
+
 	// these should be part of the standard, but right now aren't implemented by clang or gcc
 #if SCIMITAR_PROCESSOR == SCIMITAR_PROCESSOR_X64
 	constexpr size_t hardware_constructive_inference_size = 64;
