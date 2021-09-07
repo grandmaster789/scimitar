@@ -223,7 +223,7 @@ namespace scimitar::os {
 
 		for (const auto& info : dqci) {
 			uint32_t   queue_family_idx = info.queueFamilyIndex;
-			const auto props            = family_prop_list[queue_family_index];
+			const auto props            = family_prop_list[queue_family_idx];
 			const auto flags            = props.queueFlags;
 
 			for (uint32_t queue_idx = 0; queue_idx != info.queueCount; ++queue_idx) {
