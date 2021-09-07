@@ -1,16 +1,16 @@
 ﻿{
   "configurations": [
     {
-      "name": "x64-Debug (default)",
+      "name": "MSVC x64-Debug",
       "generator": "Ninja",
       "configurationType": "Debug",
       "inheritEnvironments": [ "msvc_x64_x64" ],
-      "buildRoot": "${projectDir}/build/${name}",
-      "installRoot": "${projectDir}\\out\\install\\${name}",
-      "cmakeCommandArgs": "",
+      "buildRoot": "${projectDir}\\build\\${name}",
+      "installRoot": "${projectDir}\\out\\install/${name}",
+      "cmakeCommandArgs": "-DVCPKG_TARGET_TRIPLET=x64-windows -DBUILD_SHARED_LIBS=OFF",
       "buildCommandArgs": "",
-      "ctestCommandArgs": "",
-      "cmakeToolchain": "${projectDir}/dependencies/vcpkg/scripts/buildsystems/vcpkg.cmake"
+      "ctestCommandArgs": "-C Debug",
+      "cmakeToolchain": "${projectDir}\\dependencies\\vcpkg\\scripts\\buildsystems\\vcpkg.cmake"
     }
   ]
 }

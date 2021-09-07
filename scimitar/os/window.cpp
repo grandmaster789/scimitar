@@ -11,7 +11,7 @@ namespace scimitar::os {
 		m_Width(width),
 		m_Height(height)
 	{
-		
+		(void)title;
 	}
 
 	Window::~Window() {
@@ -26,7 +26,15 @@ namespace scimitar::os {
 		return *this;
 	}
 
-	bool Window::should_close() const {
+	bool Window::should_close() const noexcept {
 		return false;
+	}
+
+	void Window::init() {
+
+	}
+
+	void Window::shutdown() {
+
 	}
 }

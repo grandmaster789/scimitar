@@ -138,6 +138,7 @@ namespace scimitar {
 				m_RequiredInstanceExtensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
 				
 				m_RequiredInstanceLayers.push_back("VK_LAYER_KHRONOS_validation");
+				// "VK_LAYER_LUNARG_api_dump"
 			}
 			
 			if constexpr (eBuild::current == eBuild::debug) {
@@ -223,6 +224,14 @@ namespace scimitar {
 
 	const vk::Instance& OS::get_vk_instance() const noexcept {
 		return m_VkInstance.get();
+	}
+
+	const vk::PhysicalDeviceFeatures& OS::get_vk_required_physical_features() const noexcept {
+		return m_RequiredDeviceFeatures;
+	}
+
+	const vk::PhysicalDeviceLimits& OS::get_vk_required_physical_limits() const noexcept {
+		return m_RequiredDeviceLimits;
 	}
 
 	VkBool32 OS::debug_callback(

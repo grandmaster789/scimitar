@@ -9,6 +9,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 add_library(${SCIMITAR_LIB} STATIC
+	"scimitar.h"
 	"scimitar.cpp"
 
 	"compile_options.h" 
@@ -47,6 +48,7 @@ add_library(${SCIMITAR_LIB} STATIC
 	"os/render_surface.cpp" 
 	"os/gpu_queue.h"
 	"os/gpu_queue.cpp"
+	"os/vma_impl.cpp"
 
 	"input/input.cpp" 
 	"input/input.h" 
@@ -71,7 +73,6 @@ add_library(${SCIMITAR_LIB} STATIC
 	"util/spin_mutex.cpp"
 	"util/string_util.h" 
 	"util/string_util.cpp"
-	"util/timestamp_counter.h" 
 	"util/threads.h" 
 	"util/threads.cpp"
 	"util/typemap.h" 
@@ -83,13 +84,13 @@ add_library(${SCIMITAR_LIB} STATIC
 	"util/codec/codepage_1252.inl"
 	"util/codec/utf.h" 
 	"util/codec/utf.cpp"
-)
+ )
 
 # vcpkg dependencies
 find_package(nlohmann_json CONFIG REQUIRED)
-find_package(tinyobjloader REQUIRED)
-find_package(Microsoft.GSL CONFIG REQUIRED)
 find_package(unofficial-concurrentqueue CONFIG REQUIRED)
+find_package(unofficial-vulkan-memory-allocator CONFIG REQUIRED)
+find_package(gcem CONFIG REQUIRED)
 
 # vulkan and shaderc are part of the Vulkan SDK 
 find_package(Vulkan REQUIRED)
@@ -98,12 +99,13 @@ find_library(SHADERC_LIB shaderc_combined $ENV{VULKAN_SDK}/Lib)
 target_link_libraries(${SCIMITAR_LIB} 
 PUBLIC
 	Vulkan::Vulkan
-	Microsoft.GSL::GSL
-
-PRIVATE
 	nlohmann_json
 	nlohmann_json::nlohmann_json
-	unofficial::concurrentqueue::concurrentqueue
+	unofficial::vulkan-memory-allocator::vulkan-memory-allocator
+
+PRIVATE
+	gcem	
+	unofficial::concurrentqueue::concurrentqueue	
 	${SHADERC_LIB}
 )
 

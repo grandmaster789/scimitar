@@ -22,7 +22,11 @@ namespace scimitar {
 
 		os::Window* create_window(const std::string& title, int width, int height);
 
-		const vk::Instance& get_vk_instance() const noexcept;
+
+		const vk::Instance&             get_vk_instance() const noexcept;
+
+		const vk::PhysicalDeviceFeatures& get_vk_required_physical_features() const noexcept;
+		const vk::PhysicalDeviceLimits&   get_vk_required_physical_limits()   const noexcept;
 
 	private:
 		using RenderDevice = os::RenderDevice;

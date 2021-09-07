@@ -22,7 +22,7 @@
 #endif
 
 // https://gpuopen.com/vulkan-memory-allocator/
-#include <vk_mem_alloc.h> 
+#include <vk_mem_alloc.h>
 
 // https://github.com/nlohmann/json
 #include <nlohmann/json.hpp>

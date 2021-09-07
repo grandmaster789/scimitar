@@ -19,13 +19,17 @@ namespace scimitar::os {
 		Window             (Window&& w) noexcept;
 		Window& operator = (Window&& w) noexcept;
 
-		bool should_close() const;
+		virtual void init();
+		virtual void shutdown();
+
+		bool should_close() const noexcept;
 
 	private:
-		int  m_Width      = 1280;
-		int  m_Height     = 720;
-		bool m_Fullscreen = false;
+		int   m_Width      = 1280;
+		int   m_Height     = 720;
+		bool  m_Fullscreen = false;
+		float m_Dpi        = 72.0;
 
-		std::unique_ptr<RenderSurface> m_Surface;
+
 	};
 }

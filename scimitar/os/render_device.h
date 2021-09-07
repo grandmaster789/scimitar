@@ -21,11 +21,14 @@ namespace scimitar::os {
 		RenderDevice             (RenderDevice&&)      = delete;
 		RenderDevice& operator = (RenderDevice&&)      = delete;
 
-		const GPU_Queue& getGraphicsQueue() const;
-		const GPU_Queue& getGraphicsQueue(const RenderSurface& surface) const;
-		const GPU_Queue& getPresentQueue (const RenderSurface& surface) const;
+		const GPU_Queue& get_graphics_queue() const;
+		const GPU_Queue& get_graphics_queue(const RenderSurface& surface) const;
+		const GPU_Queue& get_present_queue (const RenderSurface& surface) const;
 
-		vk::SurfaceFormatKHR getSurfaceFormat(const RenderSurface& surface, int* score = nullptr) const noexcept;
+		int score(const RenderSurface& surface) const noexcept; // yield a 'suitability score', higher should provide better performance and/or more features
+
+		vk::SurfaceFormatKHR get_surface_format(const RenderSurface& surface, int* score = nullptr) const noexcept;
+		vk::PresentModeKHR   get_present_mode  (const RenderSurface& surface, int* score = nullptr) const noexcept;
 
 	private:
 		std::string m_DeviceName = "[Unknown device]";
@@ -37,6 +40,7 @@ namespace scimitar::os {
 		VmaAllocator                 m_Allocator; // allocates memory on the graphics card
 
 		vk::PhysicalDeviceFeatures m_RequiredFeatures;
+		vk::PhysicalDeviceLimits   m_RequiredLimits;
 		std::vector<const char*>   m_RequiredExtensions;
 
 		bool                m_SupportsLazyTransientImages = false;
