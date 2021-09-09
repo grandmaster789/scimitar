@@ -1,6 +1,7 @@
 #include "system.h"
 #include "engine.h"
 #include "../util/algorithm.h"
+#include "../util/threads.h"
 
 namespace scimitar::core {
 	System::System(const std::string& unique_system_name):
@@ -10,6 +11,9 @@ namespace scimitar::core {
 	
 	void System::init() {
 		std::cout << "Starting subsystem " << get_name() << "\n";
+
+		if (m_DedicatedThread)
+			util::set_thread_name(get_name());
 	}
 
 	void System::update() {

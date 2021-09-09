@@ -1,5 +1,6 @@
 #include "engine.h"
 #include "../util/algorithm.h"
+#include "../util/threads.h"
 #include "../renderer/renderer.h"
 #include "../os/os.h"
 #include "../input/input.h"
@@ -42,10 +43,12 @@ namespace scimitar::core {
 	}
 
 	void Engine::start() {
-		start_libraries();
-		start_systems();
+		util::set_thread_name("Scimitar main thread");
 
 		m_Running = true;
+
+		start_libraries();
+		start_systems();
 
 		while (m_Running) {
 			for (auto& system : m_Systems)

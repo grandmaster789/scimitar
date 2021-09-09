@@ -24,6 +24,8 @@ namespace scimitar {
 	void Gui::init() {
 		System::init();
 
+		m_ThreadID = util::get_current_threadID();
+
 		create_window(
 			"Main window", 
 			m_MainWindowSettings.m_Width, 
