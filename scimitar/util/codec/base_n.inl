@@ -46,14 +46,39 @@ namespace scimitar::util::codec::detail {
 			char c = text[i];
 
 			m_IntToCharacter[i] = c;
+
+#if SCIMITAR_COMPILER == SCIMITAR_COMPILER_MSVC
+	// looks like code analysis has some false positives...
+	#pragma warning(push)
+	#pragma warning(disable: 28020) // expression 0 <= _Param_(1) && _Param_(1) <= 256-1 is not true
+#endif
+
 			m_CharacterToInt[c] = static_cast<int8_t>(i);
+
+#if SCIMITAR_COMPILER == SCIMITAR_COMPILER_MSVC
+	#pragma warning(pop)
+#endif
 
 			// consider case insensitivity
 			if (!is_case_sensitive) {
-				if (c >= 'a' && c <= 'z')
-					m_CharacterToInt[(c - 'a') + 'A'] = static_cast<int8_t>(i);
-				else if (c >= 'A' && c <= 'Z')
-					m_CharacterToInt[(c - 'A') + 'a'] = static_cast<int8_t>(i);
+				if (c >= 'a' && c <= 'z') {
+					// code analysis was concerned that arithmetic on 32-bit integers would overflow...
+					size_t wide_c = static_cast<size_t>(c);
+					size_t wide_a = static_cast<size_t>('a');
+					size_t wide_A = static_cast<size_t>('A');
+
+					// m_CharacterToInt[(c - 'a') + 'A'] = static_cast<int8_t>(i);
+					m_CharacterToInt[(wide_c - wide_a) + wide_A] = static_cast<int8_t>(i);
+				}
+				else if (c >= 'A' && c <= 'Z') {
+					// code analysis was concerned that arithmetic on 32-bit integers would overflow...
+					size_t wide_c = static_cast<size_t>(c);
+					size_t wide_a = static_cast<size_t>('a');
+					size_t wide_A = static_cast<size_t>('A');
+
+					//m_CharacterToInt[(c - 'A') + 'a'] = static_cast<int8_t>(i);
+					m_CharacterToInt[(wide_c - wide_A) + wide_a] = static_cast<int8_t>(i);
+				}
 			}
 		}
 	}

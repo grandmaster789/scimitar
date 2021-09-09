@@ -175,6 +175,7 @@ namespace scimitar {
 			m_VkDebugMessager = m_VkInstance->createDebugUtilsMessengerEXTUnique(info);
 		}
 
+		// identify all available vulkan devices, provide RenderDevices for all of them
 		for (auto physical : m_VkInstance->enumeratePhysicalDevices())
 			m_RenderDevices.push_back(std::make_unique<RenderDevice>(this, physical));
 	}

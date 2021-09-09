@@ -40,6 +40,7 @@ add_library(${SCIMITAR_LIB} STATIC
 	"gui/gui.cpp"
 	"gui/window.h"
 	"gui/window.cpp"
+	$<${SCIMITAR_WINDOWS}:${CMAKE_CURRENT_SOURCE_DIR}/gui/window_win32.cpp>
 	"gui/widget.h" 
 
 	"os/os.h" 
@@ -86,7 +87,7 @@ add_library(${SCIMITAR_LIB} STATIC
 	"util/codec/codepage_1252.h" 
 	"util/codec/utf.h" 
 	"util/codec/utf.cpp"
-  )
+)
 
 # vcpkg dependencies
 find_package(nlohmann_json CONFIG REQUIRED)

@@ -6,9 +6,14 @@ namespace scimitar::gui {
 		int                width,
 		int                height
 	) noexcept {
+		create_window(title, width, height);
 	}
 
 	bool Window::should_close() const noexcept {
-		return false;
+		return m_ShouldClose;
+	}
+
+	void Window::request_close() noexcept {
+		m_ShouldClose = true;
 	}
 }

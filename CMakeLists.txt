@@ -21,6 +21,12 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
+set(SCIMITAR_WINDOWS 0)
+
+if (WIN32)
+	set(SCIMITAR_WINDOWS 1)
+endif()
+
 # mostly for debugging dependency issues when used within an IDE
 message(STATUS "**** CMAKE_TOOLCHAIN_FILE *> ${CMAKE_TOOLCHAIN_FILE} <*")
 

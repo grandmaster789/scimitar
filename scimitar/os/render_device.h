@@ -10,6 +10,10 @@
 namespace scimitar { class OS; }
 
 namespace scimitar::os {
+	/*
+	*	Combine a physical device with a logical one, and provide queues to interact with it
+	*   (focused on graphics atm)
+	*/
 	class RenderDevice {
 	public:
 		RenderDevice(OS* os, vk::PhysicalDevice physical);
