@@ -21,6 +21,8 @@ namespace scimitar::os {
 		RenderDevice             (RenderDevice&&)      = delete;
 		RenderDevice& operator = (RenderDevice&&)      = delete;
 
+		vk::Device get_device() const;
+
 		const GPU_Queue& get_graphics_queue() const;
 		const GPU_Queue& get_graphics_queue(const RenderSurface& surface) const;
 		const GPU_Queue& get_present_queue (const RenderSurface& surface) const;
@@ -36,7 +38,7 @@ namespace scimitar::os {
 		vk::PhysicalDeviceType       m_DeviceType = vk::PhysicalDeviceType::eOther;
 		vk::PhysicalDeviceProperties m_DeviceProperties;
 		vk::PhysicalDevice           m_PhysicalDevice;
-		vk::Device                   m_Device;    // logical device interface
+		vk::UniqueDevice             m_Device;    // logical device interface
 		VmaAllocator                 m_Allocator; // allocates memory on the graphics card
 
 		vk::PhysicalDeviceFeatures m_RequiredFeatures;

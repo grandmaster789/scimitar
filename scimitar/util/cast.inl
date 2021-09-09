@@ -5,7 +5,7 @@
 #include <numeric>
 
 namespace scimitar {
-	template <util::cArithmetic T, util::cArithmetic U>
+	template <util::c_Arithmetic T, util::c_Arithmetic U>
 	constexpr T narrow_cast(U value) noexcept {
 		static constexpr auto minimum = std::numeric_limits<T>::lowest();
 		static constexpr auto maximum = std::numeric_limits<T>::max();

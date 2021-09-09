@@ -18,9 +18,14 @@ public:
 	}
 
 	void init() override {
+		m_Counter = 1000;
 	}
 
 	void update() override {
+		--m_Counter;
+
+		if (!m_Counter)
+			m_Engine->stop();
 	}
 
 	void shutdown() override {

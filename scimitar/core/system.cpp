@@ -1,4 +1,5 @@
 #include "system.h"
+#include "engine.h"
 #include "../util/algorithm.h"
 
 namespace scimitar::core {
@@ -35,6 +36,13 @@ namespace scimitar::core {
 			m_Dependencies.push_back(std::string(system_name));
 		else
 			std::cout << "Ignoring duplicate dependency: " << system_name << "\n";
+	}
+
+	void System::operator()(const RequestShutdown& req) {
+		if (req.m_System == this) {
+			shutdown();
+			broadcast(DedicatedThreadSync{});
+		}
 	}
 
 	std::ostream& operator << (std::ostream& os, const System& s) {

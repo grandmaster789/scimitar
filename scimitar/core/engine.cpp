@@ -3,6 +3,7 @@
 #include "../renderer/renderer.h"
 #include "../os/os.h"
 #include "../input/input.h"
+#include "../gui/gui.h"
 #include "../dependencies.h"
 
 #include <stdexcept>
@@ -29,6 +30,7 @@ namespace scimitar::core {
 		add<Renderer>();
 		add<OS>();
 		add<Input>();
+		add<Gui>();
 	}
 
 	Engine::~Engine() {
@@ -47,7 +49,8 @@ namespace scimitar::core {
 
 		while (m_Running) {
 			for (auto& system : m_Systems)
-				system->update();
+				if (!system->m_DedicatedThread)
+					system->update();
 
 			if (m_Application)
 				m_Application->update();
@@ -123,9 +126,35 @@ namespace scimitar::core {
 					(is_satisfied(current_system, m_InitOrder))
 				) {
 					current_system->m_Engine = this;
-					current_system->init();
 
+					if (current_system->m_DedicatedThread) {
+						// NOTE if initialization fails, we won't know until much later...
+						//      it would be better to block here until the system actually initialized
+
+						m_DedicatedSync = false;
+
+						m_DedicatedThreads.emplace_back([current_system, this] {
+							current_system->init();
+							broadcast(DedicatedThreadSync{});
+
+							while (m_Running) {
+								current_system->update();
+								std::this_thread::yield();
+							}
+						});
+
+						// busy wait until the dedicate thread is properly initialized
+						while (!m_DedicatedSync) {
+							using namespace std::chrono_literals;
+							std::this_thread::sleep_for(16ms);
+							std::this_thread::yield();
+						}
+					}
+					else 
+						current_system->init();
+					
 					m_InitOrder.push_back(sytem_name);
+
 					++num_systems_initialized;
 				}
 
@@ -190,8 +219,18 @@ namespace scimitar::core {
 			if (jt == std::end(m_Systems))
 				// somehow the system was initialized and later removed
 				std::cout << "Cannot shutdown system: " << *it << "\n";
-			else
-				(*jt)->shutdown();
+			else {
+				m_DedicatedSync = false;
+				broadcast(RequestShutdown{ (*jt).get() });
+
+				// busy wait until the system was shut down
+				while (!m_DedicatedSync) {
+					using namespace std::chrono_literals;
+					std::this_thread::sleep_for(16ms);
+					std::this_thread::yield();
+				}
+
+			}
 		}
 
 		// traverse and consolidate settings from all systems and the current application
@@ -243,5 +282,9 @@ namespace scimitar::core {
 			else
 				out << settings.dump(2);
 		}
+	}
+
+	void Engine::operator()(const DedicatedThreadSync&) {
+		m_DedicatedSync = true;
 	}
 }

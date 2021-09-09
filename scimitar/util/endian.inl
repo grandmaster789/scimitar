@@ -8,7 +8,7 @@
 #include <bit>
 
 namespace scimitar::util {
-	template <cUnsigned T>
+	template <c_Unsigned T>
 	[[nodiscard]] T byte_swap(T value) noexcept {
 		// when possible, use builtins to achieve the swap
 
@@ -55,7 +55,7 @@ namespace scimitar::util {
 #endif
 	}
 
-	template <cSigned T>
+	template <c_Signed T>
 	[[nodiscard]] T byte_swap(T value) noexcept {
 		return static_cast<T>(
 			byte_swap(
@@ -64,7 +64,7 @@ namespace scimitar::util {
 		);
 	}
 
-	template <cFloatingPoint T> 
+	template <c_FloatingPoint T> 
 	[[nodiscard]] T byte_swap(T value) noexcept {
 		if constexpr (std::is_same_v<T, float>) {
 			uint32_t x = std::bit_cast<uint32_t>(value);

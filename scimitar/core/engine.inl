@@ -4,7 +4,7 @@
 #include <utility>
 
 namespace scimitar::core {
-	template <cSystem T, typename... tArgs>
+	template <c_System T, typename... tArgs>
 	T* Engine::add(tArgs... args) {
 		std::unique_ptr<T> system;
 
@@ -21,7 +21,7 @@ namespace scimitar::core {
 		return result;
 	}
 
-	template <cSystem T>
+	template <c_System T>
 	void Engine::remove(T* system) {
 		if (auto* s = m_SystemMap.get<T>()) {
 			std::erase_if(
@@ -37,7 +37,7 @@ namespace scimitar::core {
 			throw std::runtime_error("Cannot remove subsystem that is not added to the engine");
 	}
 
-	template <cSystem T>
+	template <c_System T>
 	T* Engine::get() const {
 		return m_SystemMap.get<T>();
 	}

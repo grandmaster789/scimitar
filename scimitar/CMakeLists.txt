@@ -36,12 +36,14 @@ add_library(${SCIMITAR_LIB} STATIC
 	"geometry/direction_2d.h" 
 	"geometry/direction_2d.cpp" 
 
+	"gui/gui.h" 
+	"gui/gui.cpp"
+	"gui/window.h"
+	"gui/window.cpp"
 	"gui/widget.h" 
 
 	"os/os.h" 
 	"os/os.cpp"
-	"os/window.h"
-	"os/window.cpp"
 	"os/render_device.h" 
 	"os/render_device.cpp"
 	"os/render_surface.h"
@@ -65,6 +67,9 @@ add_library(${SCIMITAR_LIB} STATIC
 	"util/algorithm.h"
 	"util/biguint.h"
 	"util/cast.h"
+	"util/concepts.h"
+	"util/debugger.h"
+	"util/debugger.cpp"
 	"util/endian.h" 
 	"util/function.h" 
 	"util/literals.h" 
@@ -76,15 +81,12 @@ add_library(${SCIMITAR_LIB} STATIC
 	"util/threads.h" 
 	"util/threads.cpp"
 	"util/typemap.h" 
-	"util/debugger.h"
-	"util/debugger.cpp" 
-	"util/concepts.h" 
+	"util/unique_resource.h"
 	"util/codec/base_n.h"
 	"util/codec/codepage_1252.h" 
-	"util/codec/codepage_1252.inl"
 	"util/codec/utf.h" 
 	"util/codec/utf.cpp"
- )
+  )
 
 # vcpkg dependencies
 find_package(nlohmann_json CONFIG REQUIRED)

@@ -10,13 +10,20 @@
 
 #include "math/helpers.h"
 
-#include "os/window.h"
+#include "gui/gui.h"
+#include "gui/widget.h"
+#include "gui/window.h"
+
 #include "os/os.h"
+#include "os/gpu_queue.h"
+#include "os/render_device.h"
+#include "os/render_surface.h"
 
 #include "renderer/renderer.h"
 
 #include "util/algorithm.h"
 #include "util/biguint.h"
+#include "util/cast.h"
 #include "util/concepts.h"
 #include "util/debugger.h"
 #include "util/endian.h"

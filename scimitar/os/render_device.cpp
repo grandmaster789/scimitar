@@ -198,12 +198,12 @@ namespace scimitar::os {
 		dci.setPEnabledExtensionNames(m_RequiredExtensions);
 		dci.setPEnabledFeatures      (&m_RequiredFeatures);
 		
-		m_Device = m_PhysicalDevice.createDevice(dci);
+		m_Device = m_PhysicalDevice.createDeviceUnique(dci);
 
 		// initialize the memory allocator
 		VmaAllocatorCreateInfo vaci = {};
 		vaci.physicalDevice = m_PhysicalDevice;
-		vaci.device         = m_Device;
+		vaci.device         = get_device();
 		vaci.instance       = os->get_vk_instance();
 		vmaCreateAllocator(&vaci, &m_Allocator);
 
@@ -227,7 +227,7 @@ namespace scimitar::os {
 			const auto flags            = props.queueFlags;
 
 			for (uint32_t queue_idx = 0; queue_idx != info.queueCount; ++queue_idx) {
-				auto vk_queue = m_Device.getQueue(queue_family_idx, queue_idx);
+				auto vk_queue = get_device().getQueue(queue_family_idx, queue_idx);
 
 				vk::CommandPoolCreateInfo cpci(
 					vk::CommandPoolCreateFlagBits::eTransient |
@@ -235,7 +235,7 @@ namespace scimitar::os {
 					queue_family_idx
 				);
 
-				auto commandpool = m_Device.createCommandPoolUnique(cpci);
+				auto commandpool = get_device().createCommandPoolUnique(cpci);
 
 				GPU_Queue queue(
 					queue_family_idx,
@@ -258,6 +258,10 @@ namespace scimitar::os {
 		catch (std::exception& e) {
 			debugger_abort(e.what());
 		}
+	}
+
+	vk::Device RenderDevice::get_device() const {
+		return m_Device.get();
 	}
 
 	const GPU_Queue& RenderDevice::get_graphics_queue() const {

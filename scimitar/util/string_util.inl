@@ -3,7 +3,7 @@
 #include "string_util.h"
 
 namespace scimitar::util {
-	inline constexpr size_t string_size(cSize auto str) noexcept {
+	inline constexpr size_t string_size(c_Size auto str) noexcept {
 		return size(str);
 	}
 

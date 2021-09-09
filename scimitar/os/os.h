@@ -6,7 +6,6 @@
 #include "../dependencies.h"
 
 #include "../core/system.h"
-#include "window.h"
 #include "render_device.h"
 
 namespace scimitar {
@@ -20,28 +19,14 @@ namespace scimitar {
 		void update()   override; // by default, stop the engine when all windows are closed
 		void shutdown() override;
 
-		os::Window* create_window(const std::string& title, int width, int height);
-
-
-		const vk::Instance&             get_vk_instance() const noexcept;
+		const vk::Instance& get_vk_instance() const noexcept;
 
 		const vk::PhysicalDeviceFeatures& get_vk_required_physical_features() const noexcept;
 		const vk::PhysicalDeviceLimits&   get_vk_required_physical_limits()   const noexcept;
 
 	private:
 		using RenderDevice = os::RenderDevice;
-		using Window       = os::Window;
-
-		using WindowPtr = std::unique_ptr<Window>;
 		
-		std::vector<WindowPtr> m_Windows;
-
-		struct WindowSettings {
-			int  m_Width      = 1280;
-			int  m_Height     = 720;
-			bool m_Fullscreen = false;
-		} m_WindowSettings;
-
 		static VkBool32 debug_callback(
 			      VkDebugUtilsMessageSeverityFlagBitsEXT severity,
 			      VkDebugUtilsMessageTypeFlagsEXT        type,

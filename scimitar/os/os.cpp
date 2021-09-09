@@ -94,12 +94,7 @@ void vkDestroyDebugUtilsMessengerEXT(
 namespace scimitar {
 	OS::OS():
 		System("OS")
-	{
-		add_dependency("Input"); // because we create a window during initialization, and that window needs to register its inputs somewhere
-
-		register_setting("window_width",      &m_WindowSettings.m_Width);
-		register_setting("window_height",     &m_WindowSettings.m_Height);
-		register_setting("window_fullscreen", &m_WindowSettings.m_Fullscreen);
+	{	
 	}
 
 	void OS::init() {
@@ -108,12 +103,6 @@ namespace scimitar {
 		list_instance_extensions();
 		list_instance_layers();
 
-		create_window(
-			"Scimitar", 
-			m_WindowSettings.m_Width,
-			m_WindowSettings.m_Height
-		);
-		
 		{
 			vk::ApplicationInfo ai;
 			ai.setApiVersion        (VK_API_VERSION_1_2);
@@ -191,35 +180,10 @@ namespace scimitar {
 	}
 
 	void OS::update() {
-		auto local_copy = util::create_non_owning_copy(m_Windows);
-
-		for (auto* win : local_copy) {
-			if (win->should_close())
-				std::erase_if(m_Windows, [win](const auto& ptr) { return ptr.get() == win; });
-		}
-
-		if (m_Windows.empty())
-			m_Engine->stop();
 	}
 
 	void OS::shutdown() {
 		System::shutdown();
-	}
-
-	os::Window* OS::create_window(
-		const std::string& title, 
-		int                width, 
-		int                height
-	) {
-		m_Windows.push_back(
-			std::make_unique<os::Window>(
-				title.c_str(), 
-				width, 
-				height
-			)
-		);
-
-		return m_Windows.back().get();
 	}
 
 	const vk::Instance& OS::get_vk_instance() const noexcept {

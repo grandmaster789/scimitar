@@ -3,8 +3,11 @@
 #include <atomic>
 #include <vector>
 #include <memory>
+#include <thread>
+#include <condition_variable>
 
 #include "system.h"
+#include "mediator.h"
 #include "../app/application.h"
 #include "../util/typemap.h"
 
@@ -12,7 +15,11 @@
 *	The Engine coordinates subsystem configuration and task execution
 */
 namespace scimitar::core {
-	class Engine {
+	struct DedicatedThreadSync {};
+
+	class Engine:
+		public MessageHandler<DedicatedThreadSync>
+	{
 	private:
 		using ApplicationPtr = std::unique_ptr<app::Application>;
 		using SystemPtr      = std::unique_ptr<System>;
@@ -32,17 +39,19 @@ namespace scimitar::core {
 		void start();
 		void stop();
 
-		template <cSystem T, typename... tArgs>
+		template <c_System T, typename... tArgs>
 		T* add(tArgs... args);
 
-		template <cSystem T>
+		template <c_System T>
 		void remove(T* system = nullptr); // type is relevant, actual pointer value not so much
 
-		template <cSystem T>
+		template <c_System T>
 		T* get() const; // fetch a subsystem of a given type
 
 		template <app::cApplication T, typename... tArgs>
 		void set_application(tArgs... args);
+
+		void operator()(const DedicatedThreadSync&);
 
 	private:
 		void start_libraries();
@@ -53,9 +62,14 @@ namespace scimitar::core {
 
 		std::atomic_bool m_Running = false;
 
-		std::vector<SystemPtr> m_Systems;
-		util::TypeMap          m_SystemMap;
-		ApplicationPtr         m_Application;
+		std::mutex                m_SystemMutex;
+		std::condition_variable   m_SystemCondition;
+
+		std::vector<SystemPtr>    m_Systems;
+		std::vector<std::jthread> m_DedicatedThreads;
+		bool                      m_DedicatedSync = false;
+		util::TypeMap             m_SystemMap;
+		ApplicationPtr            m_Application;
 
 		std::vector<std::string> m_InitOrder; // so that cleanup can be done in reverse
 	};

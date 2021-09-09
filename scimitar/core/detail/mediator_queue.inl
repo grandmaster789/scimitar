@@ -29,7 +29,7 @@ namespace scimitar::core::detail{
 		auto it = util::find(m_SourcePtrs, handler);
 
 		if (it != std::end(m_SourcePtrs)) {
-			size_t idx = std::distance(std::begin(m_SourcePtrs), it);
+			 size_t idx = std::distance(std::cbegin(m_SourcePtrs), it);
 
 			m_SourcePtrs.erase(it);
 			m_Handlers.erase(std::begin(m_Handlers) + idx);
