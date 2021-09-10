@@ -2,6 +2,7 @@
 
 #include <iosfwd>
 #include <utility>
+#include <array>
 
 namespace scimitar {
     class Input;
@@ -98,19 +99,22 @@ namespace scimitar {
         private:
             Input* m_Manager;
 
-            bool  m_Buttons[3] = {};
+            std::array<bool, 3> m_Buttons;
+
             float m_X = 0;
             float m_Y = 0;
         };
 
-        std::ostream& operator<<(std::ostream& os, const Mouse::eButton& button);
+        std::ostream& operator << (std::ostream& os, const Mouse::eButton& button);
+                                  
+        std::ostream& operator << (std::ostream& os, const Mouse::OnMoved& mm);
+        std::ostream& operator << (std::ostream& os, const Mouse::OnButtonPressed& bp);
+        std::ostream& operator << (std::ostream& os, const Mouse::OnButtonReleased& br);
+        std::ostream& operator << (std::ostream& os, const Mouse::OnDoubleClick& bc);
+        std::ostream& operator << (std::ostream& os, const Mouse::OnScroll& ms);
+        std::ostream& operator << (std::ostream& os, const Mouse::OnEnterWindow& ew);
+        std::ostream& operator << (std::ostream& os, const Mouse::OnLeaveWindow& lw);
 
-        std::ostream& operator<<(std::ostream& os, const Mouse::OnMoved& mm);
-        std::ostream& operator<<(std::ostream& os, const Mouse::OnButtonPressed& bp);
-        std::ostream& operator<<(std::ostream& os, const Mouse::OnButtonReleased& br);
-        std::ostream& operator<<(std::ostream& os, const Mouse::OnDoubleClick& bc);
-        std::ostream& operator<<(std::ostream& os, const Mouse::OnScroll& ms);
-        std::ostream& operator<<(std::ostream& os, const Mouse::OnEnterWindow& ew);
-        std::ostream& operator<<(std::ostream& os, const Mouse::OnLeaveWindow& lw);
+        std::ostream& operator << (std::ostream& os, const Mouse& m);
     }  // namespace input
 }  // namespace scimitar

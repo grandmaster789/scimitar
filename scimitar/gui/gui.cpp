@@ -3,6 +3,7 @@
 #include "window.h"
 
 #include "../core/engine.h"
+#include "../os/os.h"
 #include "../util/algorithm.h"
 
 namespace scimitar {
@@ -29,7 +30,8 @@ namespace scimitar {
 		create_window(
 			"Main window", 
 			m_MainWindowSettings.m_Width, 
-			m_MainWindowSettings.m_Height
+			m_MainWindowSettings.m_Height,
+			m_Engine->get<OS>()
 		);
 	}
 
@@ -57,13 +59,15 @@ namespace scimitar {
 	gui::Window* Gui::create_window(
 		const std::string& title,
 		int                width,
-		int                height
+		int                height,
+		OS*                os
 	) {
 		m_Windows.push_back(
 			std::make_unique<Window>(
 				title,
 				width,
-				height
+				height,
+				os
 			)
 		);
 

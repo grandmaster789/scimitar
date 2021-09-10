@@ -3,6 +3,7 @@
 #include "../util/debugger.h"
 #include "../util/string_util.h"
 #include "../util/codec/utf.h"
+#include "../os/os.h"
 
 #include <cassert>
 
@@ -48,8 +49,8 @@ namespace {
 			s_WindowClass.cbClsExtra    = 0;             // extra bytes for the class structure
 			s_WindowClass.cbWndExtra    = sizeof(void*); // extra bytes for the window structure (we're going to put a pointer in these bytes)
 			s_WindowClass.hInstance     = GetModuleHandle(NULL);
-			s_WindowClass.hIcon         = nullptr; // LoadIcon(NULL, IDI_APPLICATION);
-			s_WindowClass.hCursor       = nullptr; // LoadCursor(NULL, IDC_ARROW);
+			s_WindowClass.hIcon         = LoadIcon(NULL, IDI_APPLICATION);
+			s_WindowClass.hCursor       = LoadCursor(NULL, IDC_ARROW);
 			s_WindowClass.hbrBackground = (HBRUSH)GetStockObject(BLACK_BRUSH);
 			s_WindowClass.lpszMenuName  = nullptr;
 			s_WindowClass.lpszClassName = s_WindowClassName;
@@ -95,8 +96,9 @@ namespace {
 namespace scimitar::gui {
 	void Window::create_window(
 		const std::string& title,
-		int width,
-		int height
+		int                width,
+		int                height,
+		OS*                os
 	) {
 		// TODO ensure that this is only done from the GUI thread
 		create_window_class();
@@ -180,11 +182,23 @@ namespace scimitar::gui {
 				s_WindowOpened = true;
 			}
 
-			m_Dpi = GetDpiForWindow(m_Handle);
-			if (m_Dpi == 0)
+			m_Dpi = static_cast<float>(GetDpiForWindow(m_Handle));
+			if (m_Dpi == 0.0f)
 				throw std::runtime_error("Failed to retrieve DPI value for window");
 			
 			// create a vulkan surface for this window
+			{
+				vk::Win32SurfaceCreateInfoKHR info = {};
+				info.setHinstance(GetModuleHandle(NULL))
+					.setHwnd     (m_Handle);
+
+				auto vk_surface = os->get_vk_instance().createWin32SurfaceKHRUnique(info);
+
+				if (!vk_surface)
+					throw std::runtime_error("Failed to create vulkan surface");
+
+				m_Surface = std::make_unique<os::RenderSurface>(std::move(vk_surface));
+			}
 		}
 		else
 			throw std::runtime_error("Failed to create window");
@@ -195,7 +209,9 @@ namespace scimitar::gui {
 		uint64_t     wParam,
 		int64_t      lParam
 	) noexcept {
-
+		(void)message;
+		(void)wParam;
+		(void)lParam;
 
 		return -1;
 	}

@@ -45,6 +45,7 @@ add_library(${SCIMITAR_LIB} STATIC
 
 	"os/os.h" 
 	"os/os.cpp"
+	$<${SCIMITAR_WINDOWS}:${CMAKE_CURRENT_SOURCE_DIR}/os/os_win32.cpp>
 	"os/render_device.h" 
 	"os/render_device.cpp"
 	"os/render_surface.h"

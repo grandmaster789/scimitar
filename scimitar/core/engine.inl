@@ -38,7 +38,12 @@ namespace scimitar::core {
 	}
 
 	template <c_System T>
-	T* Engine::get() const {
+	const T* Engine::get() const {
+		return m_SystemMap.get<T>();
+	}
+
+	template <c_System T>
+	T* Engine::get() {
 		return m_SystemMap.get<T>();
 	}
 

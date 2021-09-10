@@ -7,6 +7,8 @@
 #include <string>
 
 namespace scimitar {
+	class OS;
+
 	namespace gui {
 		class Window;
 	}
@@ -28,7 +30,8 @@ namespace scimitar {
 		Window* create_window(
 			const std::string& title, 
 			int                width, 
-			int                height
+			int                height,
+			OS*                os
 		);
 
 	private:

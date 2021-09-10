@@ -180,9 +180,6 @@ namespace scimitar {
 			m_RenderDevices.push_back(std::make_unique<RenderDevice>(this, physical));
 	}
 
-	void OS::update() {
-	}
-
 	void OS::shutdown() {
 		System::shutdown();
 	}

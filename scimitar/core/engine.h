@@ -46,7 +46,10 @@ namespace scimitar::core {
 		void remove(T* system = nullptr); // type is relevant, actual pointer value not so much
 
 		template <c_System T>
-		T* get() const; // fetch a subsystem of a given type
+		const T* get() const; // fetch a subsystem of a given type
+
+		template <c_System T>
+		T* get();
 
 		template <app::cApplication T, typename... tArgs>
 		void set_application(tArgs... args);

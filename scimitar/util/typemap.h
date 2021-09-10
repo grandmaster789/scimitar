@@ -16,7 +16,10 @@ namespace scimitar::util {
 		void remove(T* ptr = nullptr); // actual value of the argument is optional but may be useful for type deduction etc
 
 		template <typename T>
-		T* get() const; // will return nullptr if the type is not contained
+		const T* get() const; // will return nullptr if the type is not contained
+
+		template <typename T>
+		T* get();
 
 	private:
 		std::vector<std::type_index> m_Keys;

@@ -15,8 +15,8 @@ namespace scimitar {
 	public:
 		OS();
 
-		void init()     override; // by default, create a window
-		void update()   override; // by default, stop the engine when all windows are closed
+		void init()     override; 
+		void update()   override; // Platform-specific OS message pump
 		void shutdown() override;
 
 		const vk::Instance& get_vk_instance() const noexcept;

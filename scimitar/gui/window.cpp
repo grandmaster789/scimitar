@@ -4,9 +4,10 @@ namespace scimitar::gui {
 	Window::Window(
 		const std::string& title,
 		int                width,
-		int                height
+		int                height,
+		OS*                os
 	) noexcept {
-		create_window(title, width, height);
+		create_window(title, width, height, os);
 	}
 
 	bool Window::should_close() const noexcept {

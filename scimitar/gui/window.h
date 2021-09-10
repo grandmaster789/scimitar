@@ -6,13 +6,18 @@
 #include "../geometry/aa_rectangle.h"
 #include "../os/render_surface.h"
 
+namespace scimitar {
+	class OS;
+}
+
 namespace scimitar::gui {
 	class Window {
 	public:
 		Window(
 			const std::string& title,
 			int                width,
-			int                height
+			int                height,
+			OS*                os		// needed for vkInstance
 		) noexcept;
 
 		// no-copy, default-move
@@ -47,11 +52,12 @@ namespace scimitar::gui {
 		void create_window(
 			const std::string& title,
 			int                width,
-			int                height
+			int                height,
+			OS*                os
 		);
 
-		HWND m_Handle;
-		UINT m_Dpi;
+		HWND  m_Handle;
+		float m_Dpi; // NOTE windows native is UINT, but float is more convenient to calculate with
 #else
 	#error "Not yet implemented"
 #endif
