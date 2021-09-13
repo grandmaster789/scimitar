@@ -1,9 +1,8 @@
 #pragma once
 
 #include "mediator_queue.h"
+#include "../logger.h"
 #include "../../util/algorithm.h"
-
-#include <iostream>
 
 namespace scimitar::core::detail{
 	template <typename T>
@@ -35,7 +34,7 @@ namespace scimitar::core::detail{
 			m_Handlers.erase(std::begin(m_Handlers) + idx);
 		}
 		else
-			std::cout << "Tried to remove an unregistered handler\n";
+			gLogWarning << "Tried to remove an unregistered handler";
 	}
 
 	template <typename T>

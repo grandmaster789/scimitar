@@ -22,7 +22,7 @@ public:
 	}
 
 	void update() override {
-		//--m_Counter;
+		--m_Counter;
 
 		if (!m_Counter)
 			m_Engine->stop();

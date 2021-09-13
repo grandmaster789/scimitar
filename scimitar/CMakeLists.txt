@@ -26,6 +26,14 @@ add_library(${SCIMITAR_LIB} STATIC
 	"core/system.h"
 	"core/system.cpp"
 	"core/detail/mediator_queue.h" 
+	"core/logger.h" 
+	"core/logger.cpp"
+	"core/logger/log_category.h" 
+	"core/logger/log_category.cpp"  
+	"core/logger/log_message.h" 
+	"core/logger/log_message.cpp" 
+	"core/logger/log_sink.h" 
+	"core/logger/log_sink.cpp"
 
 	"geometry/extent_2d.h" 
 	"geometry/extent_2d.cpp"
@@ -36,22 +44,9 @@ add_library(${SCIMITAR_LIB} STATIC
 	"geometry/direction_2d.h" 
 	"geometry/direction_2d.cpp" 
 
-	"gui/gui.h" 
-	"gui/gui.cpp"
-	"gui/window.h"
-	"gui/window.cpp"
-	$<${SCIMITAR_WINDOWS}:${CMAKE_CURRENT_SOURCE_DIR}/gui/window_win32.cpp>
-	"gui/widget.h" 
-
 	"os/os.h" 
 	"os/os.cpp"
 	$<${SCIMITAR_WINDOWS}:${CMAKE_CURRENT_SOURCE_DIR}/os/os_win32.cpp>
-	"os/render_device.h" 
-	"os/render_device.cpp"
-	"os/render_surface.h"
-	"os/render_surface.cpp" 
-	"os/gpu_queue.h"
-	"os/gpu_queue.cpp"
 	"os/vma_impl.cpp"
 
 	"input/input.cpp" 
@@ -88,13 +83,15 @@ add_library(${SCIMITAR_LIB} STATIC
 	"util/codec/codepage_1252.h" 
 	"util/codec/utf.h" 
 	"util/codec/utf.cpp"
-)
+  )
 
 # vcpkg dependencies
 find_package(nlohmann_json CONFIG REQUIRED)
 find_package(unofficial-concurrentqueue CONFIG REQUIRED)
 find_package(unofficial-vulkan-memory-allocator CONFIG REQUIRED)
 find_package(gcem CONFIG REQUIRED)
+
+find_path(RANG_INCLUDE_DIRS "rang.hpp")
 
 # vulkan and shaderc are part of the Vulkan SDK 
 find_package(Vulkan REQUIRED)
@@ -115,5 +112,6 @@ PRIVATE
 
 target_include_directories(${SCIMITAR_LIB} PRIVATE
 	${Vulkan_INCLUDE_DIRS}
+	${RANG_INCLUDE_DIRS}
 )
 

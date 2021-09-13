@@ -9,6 +9,7 @@
     "nlohmann-json",
     "vulkan",
     "vulkan-memory-allocator",
-    "gcem"
+    "gcem",
+    "rang"
   ]
 }

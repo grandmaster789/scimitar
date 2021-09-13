@@ -7,7 +7,6 @@
 #include <condition_variable>
 
 #include "system.h"
-#include "mediator.h"
 #include "../app/application.h"
 #include "../util/typemap.h"
 
@@ -15,11 +14,7 @@
 *	The Engine coordinates subsystem configuration and task execution
 */
 namespace scimitar::core {
-	struct DedicatedThreadSync {};
-
-	class Engine:
-		public MessageHandler<DedicatedThreadSync>
-	{
+	class Engine {
 	private:
 		using ApplicationPtr = std::unique_ptr<app::Application>;
 		using SystemPtr      = std::unique_ptr<System>;
@@ -53,8 +48,6 @@ namespace scimitar::core {
 
 		template <app::cApplication T, typename... tArgs>
 		void set_application(tArgs... args);
-
-		void operator()(const DedicatedThreadSync&);
 
 	private:
 		void start_libraries();

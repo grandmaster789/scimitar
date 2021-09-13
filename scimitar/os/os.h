@@ -6,7 +6,6 @@
 #include "../dependencies.h"
 
 #include "../core/system.h"
-#include "render_device.h"
 
 namespace scimitar {
 	class OS :
@@ -24,9 +23,7 @@ namespace scimitar {
 		const vk::PhysicalDeviceFeatures& get_vk_required_physical_features() const noexcept;
 		const vk::PhysicalDeviceLimits&   get_vk_required_physical_limits()   const noexcept;
 
-	private:
-		using RenderDevice = os::RenderDevice;
-		
+	private:	
 		static VkBool32 debug_callback(
 			      VkDebugUtilsMessageSeverityFlagBitsEXT severity,
 			      VkDebugUtilsMessageTypeFlagsEXT        type,
@@ -43,7 +40,5 @@ namespace scimitar {
 		std::vector<const char*>   m_RequiredInstanceLayers;
 		vk::PhysicalDeviceFeatures m_RequiredDeviceFeatures;
 		vk::PhysicalDeviceLimits   m_RequiredDeviceLimits;
-
-		std::vector<std::unique_ptr<RenderDevice>> m_RenderDevices;
 	};
 }

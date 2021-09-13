@@ -16,6 +16,16 @@ namespace scimitar::app {
 }
 
 namespace scimitar::core {
+	/*
+	*	Current Subsystem features:
+	*		Engine-managed initialization/shutdown including inter-system dependency management
+	*		Engine-managed updating of running subsystems
+	*		Per-subsystem settings via combined 'scimitar.json'
+	*		
+	*	Considerations:
+	*		Per-system logs? currently everything uses a global log though
+	*/
+
 	struct RequestShutdown { class System* m_System = nullptr; };
 
 	class System:
@@ -67,7 +77,6 @@ namespace scimitar::core {
 		);
 
 		class Engine* m_Engine          = nullptr;
-		bool          m_DedicatedThread = false; // set this flag to true if the system needs its own thread to run in
 
 	private:
 		std::string  m_Name;

@@ -3,9 +3,12 @@
 #include "../util/debugger.h"
 #include "../core/engine.h"
 #include "../dependencies.h"
-#include "render_device.h"
 
 namespace {
+	// we'll dynamically fetch function pointers for these functions (this is the expected usage pattern)
+	PFN_vkCreateDebugUtilsMessengerEXT  impl_vkCreateDebugUtilsMessengerEXT  = nullptr;
+	PFN_vkDestroyDebugUtilsMessengerEXT impl_vkDestroyDebugUtilsMessengerEXT = nullptr;
+
 	void list_instance_extensions() {
 		auto exts = vk::enumerateInstanceExtensionProperties();
 
@@ -63,7 +66,6 @@ VkResult vkCreateDebugUtilsMessengerEXT(
 	const VkAllocationCallbacks*              allocator, 
 	VkDebugUtilsMessengerEXT*                 messenger
 ) {
-	static PFN_vkCreateDebugUtilsMessengerEXT impl_vkCreateDebugUtilsMessengerEXT = nullptr;
 	if (!impl_vkCreateDebugUtilsMessengerEXT)
 		impl_vkCreateDebugUtilsMessengerEXT = reinterpret_cast<PFN_vkCreateDebugUtilsMessengerEXT>(vkGetInstanceProcAddr(instance, "vkCreateDebugUtilsMessengerEXT"));
 
@@ -80,7 +82,6 @@ void vkDestroyDebugUtilsMessengerEXT(
 	VkDebugUtilsMessengerEXT     messenger, 
 	const VkAllocationCallbacks* allocator
 ) {
-	static PFN_vkDestroyDebugUtilsMessengerEXT impl_vkDestroyDebugUtilsMessengerEXT = nullptr;
 	if (!impl_vkDestroyDebugUtilsMessengerEXT)
 		impl_vkDestroyDebugUtilsMessengerEXT = reinterpret_cast<PFN_vkDestroyDebugUtilsMessengerEXT>(vkGetInstanceProcAddr(instance, "vkDestroyDebugUtilsMessengerEXT"));
 
@@ -140,11 +141,12 @@ namespace scimitar {
 				throw std::runtime_error("Not all required Vulkan instance layers are available");
 
 			vk::InstanceCreateInfo ici;
-			ici.setPApplicationInfo      (&ai);
-			ici.setEnabledExtensionCount (static_cast<uint32_t>(m_RequiredInstanceExtensions.size()));
-			ici.setPEnabledExtensionNames(m_RequiredInstanceExtensions);
-			ici.setEnabledLayerCount     (static_cast<uint32_t>(m_RequiredInstanceLayers.size()));
-			ici.setPEnabledLayerNames    (m_RequiredInstanceLayers);
+			ici
+				.setPApplicationInfo      (&ai)
+				.setEnabledExtensionCount (static_cast<uint32_t>(m_RequiredInstanceExtensions.size()))
+				.setPEnabledExtensionNames(m_RequiredInstanceExtensions)
+				.setEnabledLayerCount     (static_cast<uint32_t>(m_RequiredInstanceLayers.size()))
+				.setPEnabledLayerNames    (m_RequiredInstanceLayers);
 
 			m_VkInstance = vk::createInstanceUnique(ici);
 			m_VkLoader   = vk::DispatchLoaderDynamic(m_VkInstance.get(), vkGetInstanceProcAddr);
@@ -176,8 +178,10 @@ namespace scimitar {
 		}
 
 		// identify all available vulkan devices, provide RenderDevices for all of them
+		/*
 		for (auto physical : m_VkInstance->enumeratePhysicalDevices())
 			m_RenderDevices.push_back(std::make_unique<RenderDevice>(this, physical));
+		*/
 	}
 
 	void OS::shutdown() {
