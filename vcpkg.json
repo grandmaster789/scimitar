@@ -6,12 +6,10 @@
   "dependencies": [
     "concurrentqueue",
     "gtest",
-    "ms-gsl",
-    "cppcoro",
     "nlohmann-json",
-    "tinyobjloader",
     "vulkan",
     "vulkan-memory-allocator",
-    "gcem"
+    "gcem",
+    "rang"
   ]
 }

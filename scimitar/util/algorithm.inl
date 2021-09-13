@@ -33,6 +33,11 @@ namespace scimitar::util {
 		);
 	}
 
+	template <typename T>
+	uint32_t vec_count(const std::vector<T>& v) {
+		return static_cast<uint32_t>(v.size());
+	}
+
 	template <typename C, typename E>
 	bool contains(const C& c, const E& x) {
 		return std::find(
@@ -176,5 +181,49 @@ namespace scimitar::util {
 			result[i] = fn(i);
 
 		return result;
+	}
+
+	template <typename T, size_t N>
+	constexpr uint32_t count_of(T(&)[N]) {
+		static_assert(N < std::numeric_limits<uint32_t>::max());
+		return static_cast<uint32_t>(N);
+	}
+
+	namespace detail {
+		template <typename C, typename T, typename... Vs>
+		std::optional<typename C::value_type> prefer_impl(
+			const C&     haystack, 
+			const T&     current_needle, 
+			const Vs&... remaining_needles
+		) {
+			static_assert(std::is_same_v<typename C::value_type, T>);
+
+			if (contains(haystack, current_needle))
+				return current_needle;
+
+			if constexpr (sizeof...(Vs) > 0) {
+				return prefer_impl(
+					haystack, 
+					remaining_needles...
+				);
+			}
+			else // if this 'else' is missing, MSVC will yield 'unreachable code' warnings?
+				return std::nullopt;
+		}
+	}
+	
+	template <typename C, typename...tValues>
+	std::optional<typename C::value_type> prefer(
+		const C& available_options,
+		const tValues&... preferred
+	) {
+		if constexpr (sizeof...(tValues) == 0) {
+			return std::nullopt;
+		}
+
+		return detail::prefer_impl(
+			available_options, 
+			preferred...
+		);
 	}
 }

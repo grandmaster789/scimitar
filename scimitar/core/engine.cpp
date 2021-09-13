@@ -1,5 +1,8 @@
 #include "engine.h"
+#include "logger.h"
+#include "logger/log_sink.h"
 #include "../util/algorithm.h"
+#include "../util/threads.h"
 #include "../renderer/renderer.h"
 #include "../os/os.h"
 #include "../input/input.h"
@@ -40,14 +43,21 @@ namespace scimitar::core {
 	}
 
 	void Engine::start() {
-		start_libraries();
-		start_systems();
+		util::set_current_thread_name("Scimitar main thread");
 
 		m_Running = true;
 
+		// if the global logger only has 1 sink, it logs *only* to 'scimitar.log'
+		if (Logger::instance().getNumSinks() < 2)
+			Logger::instance().add(logger::makeStdOutSink());
+
+		start_libraries();
+		start_systems();
+
 		while (m_Running) {
 			for (auto& system : m_Systems)
-				system->update();
+				//if (!system->m_DedicatedThread)
+					system->update();
 
 			if (m_Application)
 				m_Application->update();
@@ -86,7 +96,7 @@ namespace scimitar::core {
 							entry.m_SetFn(*it);
 					}
 					else
-						std::cout << "No settings for subsystem " << ptr->get_name() << "\n";
+						gLog << "No settings for subsystem " << ptr->get_name();
 				}
 
 				if (m_Application) {
@@ -97,11 +107,11 @@ namespace scimitar::core {
 							entry.m_SetFn(*it);
 					}
 					else
-						std::cout << "No application settings for " << m_Application->get_name() << "\n";
+						gLog << "No application settings for " << m_Application->get_name();
 				}
 			}
 			else
-				std::cout << "No configuration found, using defaults for all systems\n";
+				gLog << "No configuration found, using defaults for all systems";
 		}
 
 		// start subsystem initialization; keep track of (satisfied) dependencies and store the order
@@ -123,9 +133,11 @@ namespace scimitar::core {
 					(is_satisfied(current_system, m_InitOrder))
 				) {
 					current_system->m_Engine = this;
-					current_system->init();
 
+					current_system->init();
+					
 					m_InitOrder.push_back(sytem_name);
+
 					++num_systems_initialized;
 				}
 
@@ -137,21 +149,23 @@ namespace scimitar::core {
 
 					if (num_systems_initialized == current_pass_count) {
 						// we've stalled, figure out which systems failed to initialize
-						std::cout << "Stalled during system initialization\n";
+						gLog << "Stalled during system initialization";
 
 						for (const auto& ptr : m_Systems)
 							if (!util::contains(m_InitOrder, sytem_name)) {
 								// try to be specific about what's missing
-								std::cout << "\tFailed to initialize: " << sytem_name << ", missing dependencies ";
+								std::stringstream sstr;
+
+								sstr << "\tFailed to initialize: " << sytem_name << ", missing dependencies ";
 
 								for (const auto& dep : ptr->get_dependencies())
 									if (!util::contains(m_InitOrder, dep))
-										std::cout << "'" << dep << "' ";
+										sstr << "'" << dep << "' ";
 
-								std::cout << "\n";
+								gLog << sstr.str();
 							}
 
-						throw std::runtime_error("Stalled during system initialization\n");
+						throw std::runtime_error("Stalled during system initialization");
 					}
 
 					if (num_systems_initialized == num_systems)
@@ -172,7 +186,7 @@ namespace scimitar::core {
 				throw std::runtime_error("Application dependencies were not satisfied");
 		}
 		else
-			std::cout << "No application was set\n"; // perhaps some kind of diagnosic mode?
+			gLog << "No application was set"; // perhaps some kind of diagnosic mode?
 	}
 
 	void Engine::stop_systems() {
@@ -189,9 +203,18 @@ namespace scimitar::core {
 
 			if (jt == std::end(m_Systems))
 				// somehow the system was initialized and later removed
-				std::cout << "Cannot shutdown system: " << *it << "\n";
-			else
-				(*jt)->shutdown();
+				gLog << "Cannot shutdown system: " << *it;
+			else {
+				//m_DedicatedSync = false;
+				broadcast(RequestShutdown{ (*jt).get() });
+
+				/*// busy wait until the system was shut down
+				while (!m_DedicatedSync) {
+					using namespace std::chrono_literals;
+					std::this_thread::sleep_for(16ms);
+					std::this_thread::yield();
+				}*/
+			}
 		}
 
 		// traverse and consolidate settings from all systems and the current application
@@ -239,7 +262,7 @@ namespace scimitar::core {
 
 			std::ofstream out("scimitar.json");
 			if (!out.good())
-				std::cout << "Failed to write to scimitar.json\n";
+				gLog << "Failed to write to scimitar.json";
 			else
 				out << settings.dump(2);
 		}

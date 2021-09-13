@@ -1,25 +1,36 @@
 #include "os.h"
 #include "../util/algorithm.h"
-#include "../util/debugger.h"
 #include "../core/engine.h"
+#include "../core/logger.h"
 #include "../dependencies.h"
-#include "render_device.h"
 
 namespace {
+	// we'll dynamically fetch function pointers for these functions (this is the expected usage pattern)
+	PFN_vkCreateDebugUtilsMessengerEXT  impl_vkCreateDebugUtilsMessengerEXT  = nullptr;
+	PFN_vkDestroyDebugUtilsMessengerEXT impl_vkDestroyDebugUtilsMessengerEXT = nullptr;
+
 	void list_instance_extensions() {
 		auto exts = vk::enumerateInstanceExtensionProperties();
 
-		debugger_log("Available Vulkan instance extensions ({}):", exts.size());
+		std::stringstream sstr;
+
+		sstr << std::format("Available Vulkan instance extensions ({}):\n", exts.size());
 		for (const auto& prop : exts)
-			debugger_log("\t{}", prop.extensionName);
+			sstr << "\t" << prop.extensionName << "\n";
+
+		gLog << sstr.str();
 	}
 
 	void list_instance_layers() {
 		auto layers = vk::enumerateInstanceLayerProperties();
 
-		debugger_log("Available Vulkan instance layers ({}): ", layers.size());
+		std::stringstream sstr;
+
+		sstr << std::format("Available Vulkan instance layers ({}):\n", layers.size());
 		for (const auto& layer : layers)
-			debugger_log("\t{}", layer.layerName);
+			sstr << "\t" << layer.layerName << "\n";
+
+		gLog << sstr.str();
 	}
 
 	bool check_instance_extensions(const std::vector<const char*>& reqs) {
@@ -31,7 +42,8 @@ namespace {
 			if (!contains_if(available, [req](const vk::ExtensionProperties& props) {
 				return std::string(props.extensionName.data()) == req;
 			})) {
-				std::cout << "Missing required instance extension: " << req << "\n";
+				gLogError << "Missing required instance extension: " << req;
+
 				return false;
 			}
 		}
@@ -48,7 +60,8 @@ namespace {
 			if (!contains_if(available, [req](const vk::LayerProperties& props) {
 				return std::string(props.layerName.data()) == req;
 			})) {
-				std::cout << "Missing required instance layer: " << req << "\n";
+				gLogError << "Missing required instance layer: " << req;
+
 				return false;
 			}
 		}
@@ -63,7 +76,6 @@ VkResult vkCreateDebugUtilsMessengerEXT(
 	const VkAllocationCallbacks*              allocator, 
 	VkDebugUtilsMessengerEXT*                 messenger
 ) {
-	static PFN_vkCreateDebugUtilsMessengerEXT impl_vkCreateDebugUtilsMessengerEXT = nullptr;
 	if (!impl_vkCreateDebugUtilsMessengerEXT)
 		impl_vkCreateDebugUtilsMessengerEXT = reinterpret_cast<PFN_vkCreateDebugUtilsMessengerEXT>(vkGetInstanceProcAddr(instance, "vkCreateDebugUtilsMessengerEXT"));
 
@@ -80,7 +92,6 @@ void vkDestroyDebugUtilsMessengerEXT(
 	VkDebugUtilsMessengerEXT     messenger, 
 	const VkAllocationCallbacks* allocator
 ) {
-	static PFN_vkDestroyDebugUtilsMessengerEXT impl_vkDestroyDebugUtilsMessengerEXT = nullptr;
 	if (!impl_vkDestroyDebugUtilsMessengerEXT)
 		impl_vkDestroyDebugUtilsMessengerEXT = reinterpret_cast<PFN_vkDestroyDebugUtilsMessengerEXT>(vkGetInstanceProcAddr(instance, "vkDestroyDebugUtilsMessengerEXT"));
 
@@ -94,12 +105,7 @@ void vkDestroyDebugUtilsMessengerEXT(
 namespace scimitar {
 	OS::OS():
 		System("OS")
-	{
-		add_dependency("Input"); // because we create a window during initialization, and that window needs to register its inputs somewhere
-
-		register_setting("window_width",      &m_WindowSettings.m_Width);
-		register_setting("window_height",     &m_WindowSettings.m_Height);
-		register_setting("window_fullscreen", &m_WindowSettings.m_Fullscreen);
+	{	
 	}
 
 	void OS::init() {
@@ -108,16 +114,39 @@ namespace scimitar {
 		list_instance_extensions();
 		list_instance_layers();
 
-		create_window(
-			"Scimitar", 
-			m_WindowSettings.m_Width,
-			m_WindowSettings.m_Height
-		);
-		
+		init_vulkan();
+
+		// identify all available vulkan devices, provide RenderDevices for all of them
+		for (auto physical : m_VkInstance->enumeratePhysicalDevices())
+			m_RenderDevices.push_back(RenderDevice(physical));
+
+		if (m_RenderDevices.empty())
+			throw std::runtime_error("No render devices available");
+	}
+
+	void OS::shutdown() {
+		System::shutdown();
+	}
+
+	const vk::Instance& OS::get_vk_instance() const noexcept {
+		return m_VkInstance.get();
+	}
+
+	const vk::PhysicalDeviceFeatures& OS::get_vk_required_physical_features() const noexcept {
+		return m_RequiredDeviceFeatures;
+	}
+
+	const vk::PhysicalDeviceLimits& OS::get_vk_required_physical_limits() const noexcept {
+		return m_RequiredDeviceLimits;
+	}
+
+	void OS::init_vulkan() {
+		using util::vec_count;
+
 		{
 			vk::ApplicationInfo ai;
 			ai.setApiVersion        (VK_API_VERSION_1_2);
-			ai.setApplicationVersion(VK_MAKE_VERSION(0, 1, 0));
+			ai.setApplicationVersion(VK_MAKE_VERSION(0, 1, 0)); // perhaps hook this somehow into the Application subsystem?
 			ai.setEngineVersion     (VK_MAKE_VERSION(0, 1, 0));
 			ai.setPApplicationName  ("Scimitar application");
 			ai.setPEngineName       ("Scimitar engine");
@@ -133,13 +162,14 @@ namespace scimitar {
 
 			if constexpr (
 				(ePlatform::current == ePlatform::windows) &&
-				(eBuild   ::current == eBuild   ::debug)
+				(eBuild::current == eBuild::debug)
 			) {
 				m_RequiredInstanceExtensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
-				
+
 				m_RequiredInstanceLayers.push_back("VK_LAYER_KHRONOS_validation");
+				// "VK_LAYER_LUNARG_api_dump"
 			}
-			
+
 			if constexpr (eBuild::current == eBuild::debug) {
 				m_RequiredDeviceFeatures.robustBufferAccess = VK_TRUE;
 			}
@@ -150,11 +180,12 @@ namespace scimitar {
 				throw std::runtime_error("Not all required Vulkan instance layers are available");
 
 			vk::InstanceCreateInfo ici;
-			ici.setPApplicationInfo      (&ai);
-			ici.setEnabledExtensionCount (static_cast<uint32_t>(m_RequiredInstanceExtensions.size()));
-			ici.setPEnabledExtensionNames(m_RequiredInstanceExtensions);
-			ici.setEnabledLayerCount     (static_cast<uint32_t>(m_RequiredInstanceLayers.size()));
-			ici.setPEnabledLayerNames    (m_RequiredInstanceLayers);
+			ici
+				.setPApplicationInfo      (&ai)
+				.setEnabledExtensionCount (vec_count(m_RequiredInstanceExtensions))
+				.setPEnabledExtensionNames(m_RequiredInstanceExtensions)
+				.setEnabledLayerCount     (vec_count(m_RequiredInstanceLayers))
+				.setPEnabledLayerNames    (m_RequiredInstanceLayers);
 
 			m_VkInstance = vk::createInstanceUnique(ici);
 			m_VkLoader   = vk::DispatchLoaderDynamic(m_VkInstance.get(), vkGetInstanceProcAddr);
@@ -162,7 +193,7 @@ namespace scimitar {
 
 		if constexpr (
 			(ePlatform::current == ePlatform::windows) &&
-			(eBuild   ::current == eBuild   ::debug)
+			(eBuild::current == eBuild::debug)
 		) {
 			vk::DebugUtilsMessengerCreateInfoEXT info;
 
@@ -174,7 +205,7 @@ namespace scimitar {
 			);
 
 			info.setMessageType(
-				vk::DebugUtilsMessageTypeFlagBitsEXT::eGeneral     |
+				vk::DebugUtilsMessageTypeFlagBitsEXT::eGeneral |
 				vk::DebugUtilsMessageTypeFlagBitsEXT::ePerformance |
 				vk::DebugUtilsMessageTypeFlagBitsEXT::eValidation
 			);
@@ -184,45 +215,6 @@ namespace scimitar {
 
 			m_VkDebugMessager = m_VkInstance->createDebugUtilsMessengerEXTUnique(info);
 		}
-
-		for (auto physical : m_VkInstance->enumeratePhysicalDevices())
-			m_RenderDevices.push_back(std::make_unique<RenderDevice>(this, physical));
-	}
-
-	void OS::update() {
-		auto local_copy = util::create_non_owning_copy(m_Windows);
-
-		for (auto* win : local_copy) {
-			if (win->should_close())
-				std::erase_if(m_Windows, [win](const auto& ptr) { return ptr.get() == win; });
-		}
-
-		if (m_Windows.empty())
-			m_Engine->stop();
-	}
-
-	void OS::shutdown() {
-		System::shutdown();
-	}
-
-	os::Window* OS::create_window(
-		const std::string& title, 
-		int                width, 
-		int                height
-	) {
-		m_Windows.push_back(
-			std::make_unique<os::Window>(
-				title.c_str(), 
-				width, 
-				height
-			)
-		);
-
-		return m_Windows.back().get();
-	}
-
-	const vk::Instance& OS::get_vk_instance() const noexcept {
-		return m_VkInstance.get();
 	}
 
 	VkBool32 OS::debug_callback(
@@ -236,13 +228,13 @@ namespace scimitar {
 
 		switch (severity) {
 		case VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT:
-			// debugger_log("Vulkan: {}", pCallbackData->pMessage);
+			//gLog << "\tvk: " << data->pMessage;
 			break;
 
 		case VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT: 
 		case VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT: 
 		case VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT: 
-			debugger_log("Vulkan: {}", data->pMessage);
+			gLog << "\tvk: " << data->pMessage;
 			break;
 
 		default: 

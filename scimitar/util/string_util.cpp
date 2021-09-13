@@ -163,6 +163,93 @@ namespace scimitar::util {
 		return result;
 	}
 
+	[[nodiscard]] std::string concat(
+		const std::vector<std::string>& parts,
+		std::string_view                separator
+	) {
+		size_t total = 0;
+
+		for (const auto& part : parts) {
+			total += part.size();
+			total += separator.size();
+		}
+
+		std::string result;
+		result.reserve(total);
+
+		for (const auto& part : parts) {
+			result.append(part);
+			result.append(separator);
+		}
+
+		return result;
+	}
+
+	[[nodiscard]] std::string concat(
+		const std::vector<const char*>& parts,
+		std::string_view                separator
+	) {
+		size_t total = 0;
+
+		for (const auto& part : parts) {
+			total += strlen(part); // eww
+			total += separator.size();
+		}
+		
+		std::string result;
+		result.reserve(total);
+
+		for (const auto& part : parts) {
+			result.append(part);
+			result.append(separator);
+		}
+
+		return result;
+	}
+
+	[[nodiscard]] std::string concat(
+		const std::vector<std::string_view>& parts,
+		std::string_view separator
+	) {
+		size_t total = 0;
+
+		for (const auto& part : parts) {
+			total += part.size();
+			total += separator.size();
+		}
+
+		std::string result;
+		result.reserve(total);
+
+		for (const auto& part : parts) {
+			result.append(part);
+			result.append(separator);
+		}
+
+		return result;
+	}
+
+	std::string columnize(
+		const std::string& source_string,
+		const int          column_width,
+		const char         separator
+	) {
+		std::string result;
+
+		size_t cursor = 0;
+
+		for (const auto& character : source_string) {
+			result.push_back(character);
+
+			if (++cursor >= column_width) {
+				cursor = 0;
+				result.push_back(separator);
+			}
+		}
+
+		return result;
+	}
+
 	namespace traits {
 		constexpr bool ByteChar::eq_int_type(
 			int_type  a, 

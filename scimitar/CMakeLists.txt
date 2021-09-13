@@ -9,6 +9,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
 add_library(${SCIMITAR_LIB} STATIC
+	"scimitar.h"
 	"scimitar.cpp"
 
 	"compile_options.h" 
@@ -25,6 +26,14 @@ add_library(${SCIMITAR_LIB} STATIC
 	"core/system.h"
 	"core/system.cpp"
 	"core/detail/mediator_queue.h" 
+	"core/logger.h" 
+	"core/logger.cpp"
+	"core/logger/log_category.h" 
+	"core/logger/log_category.cpp"  
+	"core/logger/log_message.h" 
+	"core/logger/log_message.cpp" 
+	"core/logger/log_sink.h" 
+	"core/logger/log_sink.cpp"
 
 	"geometry/extent_2d.h" 
 	"geometry/extent_2d.cpp"
@@ -35,18 +44,10 @@ add_library(${SCIMITAR_LIB} STATIC
 	"geometry/direction_2d.h" 
 	"geometry/direction_2d.cpp" 
 
-	"gui/widget.h" 
-
 	"os/os.h" 
 	"os/os.cpp"
-	"os/window.h"
-	"os/window.cpp"
-	"os/render_device.h" 
-	"os/render_device.cpp"
-	"os/render_surface.h"
-	"os/render_surface.cpp" 
-	"os/gpu_queue.h"
-	"os/gpu_queue.cpp"
+	$<${SCIMITAR_WINDOWS}:${CMAKE_CURRENT_SOURCE_DIR}/os/os_win32.cpp>
+	"os/vma_impl.cpp"
 
 	"input/input.cpp" 
 	"input/input.h" 
@@ -63,6 +64,9 @@ add_library(${SCIMITAR_LIB} STATIC
 	"util/algorithm.h"
 	"util/biguint.h"
 	"util/cast.h"
+	"util/concepts.h"
+	"util/debugger.h"
+	"util/debugger.cpp"
 	"util/endian.h" 
 	"util/function.h" 
 	"util/literals.h" 
@@ -71,25 +75,23 @@ add_library(${SCIMITAR_LIB} STATIC
 	"util/spin_mutex.cpp"
 	"util/string_util.h" 
 	"util/string_util.cpp"
-	"util/timestamp_counter.h" 
 	"util/threads.h" 
 	"util/threads.cpp"
 	"util/typemap.h" 
-	"util/debugger.h"
-	"util/debugger.cpp" 
-	"util/concepts.h" 
+	"util/unique_resource.h"
 	"util/codec/base_n.h"
 	"util/codec/codepage_1252.h" 
-	"util/codec/codepage_1252.inl"
 	"util/codec/utf.h" 
 	"util/codec/utf.cpp"
-)
+   "util/filesystem.h" "util/filesystem.cpp" "os/render_device.h" "os/render_device.cpp" "os/gpu_queue.h" "os/gpu_queue.cpp")
 
 # vcpkg dependencies
 find_package(nlohmann_json CONFIG REQUIRED)
-find_package(tinyobjloader REQUIRED)
-find_package(Microsoft.GSL CONFIG REQUIRED)
 find_package(unofficial-concurrentqueue CONFIG REQUIRED)
+find_package(unofficial-vulkan-memory-allocator CONFIG REQUIRED)
+find_package(gcem CONFIG REQUIRED)
+
+find_path(RANG_INCLUDE_DIRS "rang.hpp")
 
 # vulkan and shaderc are part of the Vulkan SDK 
 find_package(Vulkan REQUIRED)
@@ -98,16 +100,18 @@ find_library(SHADERC_LIB shaderc_combined $ENV{VULKAN_SDK}/Lib)
 target_link_libraries(${SCIMITAR_LIB} 
 PUBLIC
 	Vulkan::Vulkan
-	Microsoft.GSL::GSL
-
-PRIVATE
 	nlohmann_json
 	nlohmann_json::nlohmann_json
-	unofficial::concurrentqueue::concurrentqueue
+	unofficial::vulkan-memory-allocator::vulkan-memory-allocator
+
+PRIVATE
+	gcem	
+	unofficial::concurrentqueue::concurrentqueue	
 	${SHADERC_LIB}
 )
 
 target_include_directories(${SCIMITAR_LIB} PRIVATE
 	${Vulkan_INCLUDE_DIRS}
+	${RANG_INCLUDE_DIRS}
 )
 

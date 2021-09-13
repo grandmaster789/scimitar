@@ -24,7 +24,7 @@ namespace scimitar::util {
 		requires (M < N)
 		Biguint(const Biguint<T, M>& x) noexcept;                      // implicit construction from smaller biguint
 
-		template <util::cIntegral U>
+		template <util::c_Integral U>
 		Biguint(U value) noexcept;                                     // implicit construction from native integer types
 		
 		explicit Biguint(std::string_view sv, int base = 10) noexcept; // explicit construction from string (supports base 2/8/10/16)
@@ -35,7 +35,7 @@ namespace scimitar::util {
 		requires (M < N)
 		Biguint& operator = (const Biguint<T, M>& x) noexcept;         // assignment from a smaller biguint
 
-		template <util::cIntegral U>
+		template <util::c_Integral U>
 		Biguint& operator = (U value) noexcept;                        // assign from native integer types
 
 		explicit operator bool() const noexcept;

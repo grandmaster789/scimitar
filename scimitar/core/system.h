@@ -9,12 +9,28 @@
 
 #include "../dependencies.h"
 
+#include "mediator.h"
+
 namespace scimitar::app {
 	class Application;
 }
 
 namespace scimitar::core {
-	class System {
+	/*
+	*	Current Subsystem features:
+	*		Engine-managed initialization/shutdown including inter-system dependency management
+	*		Engine-managed updating of running subsystems
+	*		Per-subsystem settings via combined 'scimitar.json'
+	*		
+	*	Considerations:
+	*		Per-system logs? currently everything uses a global log though
+	*/
+
+	struct RequestShutdown { class System* m_System = nullptr; };
+
+	class System:
+		public MessageHandler<RequestShutdown>
+	{
 	private:
 		struct JsonProperties {
 			std::string                                m_VariableName;
@@ -44,8 +60,10 @@ namespace scimitar::core {
 
 		const std::string& get_name() const;
 
-		const Dependencies& get_dependencies() const;
-		const Settings&     get_settings()     const;
+		const Dependencies& get_dependencies()     const;
+		const Settings&     get_settings()         const;
+		
+		void operator()(const RequestShutdown& req);
 
 		friend std::ostream& operator << (std::ostream& os, const System& s);
 
@@ -58,16 +76,16 @@ namespace scimitar::core {
 			T*                 member_variable
 		);
 
-		class Engine* m_Engine = nullptr;
+		class Engine* m_Engine          = nullptr;
 
 	private:
 		std::string  m_Name;
 		Dependencies m_Dependencies;
-		Settings     m_Settings;
+		Settings     m_Settings;		
 	};
 
 	template <typename T>
-	concept cSystem = 
+	concept c_System = 
 		 std::derived_from<T, System> &&
 		!std::derived_from<T, app::Application>;
 }

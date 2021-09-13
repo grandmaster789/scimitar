@@ -1,5 +1,8 @@
 #include "system.h"
+#include "engine.h"
 #include "../util/algorithm.h"
+#include "../util/threads.h"
+#include "logger.h"
 
 namespace scimitar::core {
 	System::System(const std::string& unique_system_name):
@@ -8,14 +11,14 @@ namespace scimitar::core {
 	}
 	
 	void System::init() {
-		std::cout << "Starting subsystem " << get_name() << "\n";
+		gLog << "Starting subsystem " << get_name();
 	}
 
 	void System::update() {
 	}
 
 	void System::shutdown() {
-		std::cout << "Stopped subsystem " << get_name() << "\n";
+		gLog << "Stopped subsystem " << get_name();
 	}
 
 	const std::string& System::get_name() const {
@@ -34,11 +37,16 @@ namespace scimitar::core {
 		if (!util::contains(m_Dependencies, system_name))
 			m_Dependencies.push_back(std::string(system_name));
 		else
-			std::cout << "Ignoring duplicate dependency: " << system_name << "\n";
+			gLog << "Ignoring duplicate dependency: " << system_name;
+	}
+
+	void System::operator()(const RequestShutdown& req) {
+		if (req.m_System == this)
+			shutdown();
 	}
 
 	std::ostream& operator << (std::ostream& os, const System& s) {
-		os << s.get_name() << "\n";
+		os << s.get_name();
 		return os;
 	}
 }

@@ -33,16 +33,35 @@ namespace scimitar::util {
 	}
 
 	template <typename T>
-	T* TypeMap::get() const {
+	const T* TypeMap::get() const {
 		std::type_index key(typeid(T));
 		auto it = find(m_Keys, key);
+
+		if (it == std::cend(m_Keys))
+			return nullptr;
+		else {
+			size_t position = std::distance(std::cbegin(m_Keys), it);
+
+			return static_cast<const T*>(*(std::cbegin(m_Values) + position));
+		}
+	}
+
+	template <typename T>
+	T* TypeMap::get() {
+		std::type_index key(typeid(T));
+		auto it = std::find(
+			std::begin(m_Keys), 
+			std::end(m_Keys),
+			key
+		);
 
 		if (it == std::end(m_Keys))
 			return nullptr;
 		else {
 			size_t position = std::distance(std::begin(m_Keys), it);
 
-			return static_cast<T*>(std::begin(m_Values) + position);
+			// convert from void* to T*
+			return static_cast<T*>(*(std::begin(m_Values) + position));
 		}
 	}
 }

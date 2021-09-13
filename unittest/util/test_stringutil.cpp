@@ -35,4 +35,28 @@ namespace test {
 			ASSERT_EQ(spliced, expected);
 		}
 	}
+
+	TEST(util, stringify) {
+		auto s = stringify(1, 2, 3);
+		ASSERT_EQ(s, "123");
+	}
+
+	TEST(util, columnize) {
+		auto col = columnize("123451234512345", 5);
+		ASSERT_EQ(col, "12345\n12345\n12345\n");
+	}
+
+	TEST(util, concat) {
+		std::vector<std::string>      str_parts  = { "123", "456", "789" };
+		std::vector<const char*>      char_parts = { "abc", "def", "ghi" };
+		std::vector<std::string_view> sv_parts   = { "aaa", "bbb", "ccc" };
+
+		auto con_str  = concat(str_parts);
+		auto con_char = concat(char_parts);
+		auto con_sv   = concat(sv_parts);
+
+		ASSERT_EQ(con_str,  "123456789");
+		ASSERT_EQ(con_char, "abcdefghi");
+		ASSERT_EQ(con_sv,   "aaabbbccc");
+	}
 }

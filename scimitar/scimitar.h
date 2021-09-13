@@ -10,13 +10,13 @@
 
 #include "math/helpers.h"
 
-#include "os/window.h"
 #include "os/os.h"
 
 #include "renderer/renderer.h"
 
 #include "util/algorithm.h"
 #include "util/biguint.h"
+#include "util/cast.h"
 #include "util/concepts.h"
 #include "util/debugger.h"
 #include "util/endian.h"

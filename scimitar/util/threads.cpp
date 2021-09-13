@@ -6,6 +6,7 @@
 #include "codec/utf.h"
 
 #include <cassert>
+#include <array>
 
 #if SCIMITAR_PLATFORM == SCIMITAR_PLATFORM_WINDOWS
 	#include <processthreadsapi.h>
@@ -14,11 +15,24 @@
 
 namespace scimitar::util {
 #if SCIMITAR_PLATFORM == SCIMITAR_PLATFORM_WINDOWS
-	void set_thread_name(std::string_view name) {
+	void set_current_thread_name(std::string_view name) {
 
 		std::wstring wide = to_wstring(name);
 		// https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-setthreaddescription
 		SetThreadDescription(GetCurrentThread(), wide.data());
+	}
+
+	std::string get_current_thread_name() {
+		PWSTR desc;
+
+		// https://docs.microsoft.com/en-us/windows/win32/api/processthreadsapi/nf-processthreadsapi-getthreaddescription
+		GetThreadDescription(GetCurrentThread(), &desc);
+
+		auto result = to_string(desc);
+
+		LocalFree(desc);
+
+		return result;
 	}
 
 	bool is_main_thread() {

@@ -19,7 +19,7 @@ namespace scimitar::util {
 	}
 
 	template <std::unsigned_integral T, int N>
-	template <util::cIntegral U>
+	template <util::c_Integral U>
 	Biguint<T, N>::Biguint(U value)
 		noexcept
 	{
@@ -95,7 +95,7 @@ namespace scimitar::util {
 	}
 
 	template <std::unsigned_integral T, int N>
-	template <util::cIntegral U>
+	template <util::c_Integral U>
 	Biguint<T, N>& Biguint<T, N>::operator = (U value)
 		noexcept
 	{
