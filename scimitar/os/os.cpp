@@ -153,6 +153,15 @@ namespace scimitar {
 		return m_RequiredDeviceLimits;
 	}
 
+	void OS::close(Window* w) {
+		std::erase_if(
+			m_Windows, 
+			[=](const auto& ptr) {
+				return ptr.get() == w;
+			}
+		);
+	}
+
 	void OS::init_vulkan() {
 		using util::vec_count;
 

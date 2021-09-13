@@ -1,6 +1,7 @@
 #include "window.h"
 #include <cassert>
 #include "../core/logger.h"
+#include "os.h"
 
 /*
 *	Very much win32 api code in here
@@ -229,7 +230,10 @@ namespace scimitar::os {
 		case WM_DESTROY:
 			if (is_main_window())
 				PostQuitMessage(0);
+			break;
 
+		case WM_CLOSE:
+			m_Owner->close(this);
 			break;
 		}
 

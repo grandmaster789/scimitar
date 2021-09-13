@@ -30,6 +30,8 @@ namespace scimitar {
 		const vk::PhysicalDeviceFeatures& get_vk_required_physical_features() const noexcept;
 		const vk::PhysicalDeviceLimits&   get_vk_required_physical_limits()   const noexcept;
 
+		void close(Window* w);
+
 	private:
 		void init_vulkan();
 
