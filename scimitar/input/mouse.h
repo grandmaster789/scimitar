@@ -99,7 +99,7 @@ namespace scimitar {
         private:
             Input* m_Manager;
 
-            std::array<bool, 3> m_Buttons;
+            std::array<bool, 3> m_Buttons = {};
 
             float m_X = 0;
             float m_Y = 0;

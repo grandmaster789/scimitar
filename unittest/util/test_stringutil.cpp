@@ -27,7 +27,7 @@ namespace test {
 			auto spliced = split("foo/bar/baz", "/");
 
 			std::vector<std::string> expected = {
-				"foo",
+				"foo", 
 				"bar",
 				"baz"
 			};

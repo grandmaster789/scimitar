@@ -7,12 +7,17 @@
 #include "../core/system.h"
 #include "render_device.h"
 
+namespace scimitar::os {
+	class Window;
+}
+
 namespace scimitar {
 	class OS :
 		public core::System
 	{
 	public:
 		using RenderDevice = os::RenderDevice;
+		using Window       = os::Window;
 
 		OS();
 
@@ -46,5 +51,7 @@ namespace scimitar {
 		vk::PhysicalDeviceLimits   m_RequiredDeviceLimits;
 		
 		std::vector<RenderDevice> m_RenderDevices;
+
+		std::vector<std::unique_ptr<Window>> m_Windows;
 	};
 }

@@ -30,7 +30,8 @@ namespace scimitar::os {
 
 		gLog << sstr.str();
 
-
+		// at this point the device is in a partially initialized state -- we need a render surface to continue
+		// (which is part of the Window interface)
 	}
 
 	vk::Device RenderDevice::getHandle() {

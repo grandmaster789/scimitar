@@ -3,6 +3,7 @@
 #include "../core/engine.h"
 #include "../core/logger.h"
 #include "../dependencies.h"
+#include "window.h"
 
 namespace {
 	// we'll dynamically fetch function pointers for these functions (this is the expected usage pattern)
@@ -122,10 +123,22 @@ namespace scimitar {
 
 		if (m_RenderDevices.empty())
 			throw std::runtime_error("No render devices available");
+
+		// create a main window with a surface
+		m_Windows.push_back(std::make_unique<Window>(
+			"Scimitar",
+			1280,
+			720,
+			true,
+			0,
+			this
+		));
 	}
 
 	void OS::shutdown() {
 		System::shutdown();
+
+		m_Windows.clear();
 	}
 
 	const vk::Instance& OS::get_vk_instance() const noexcept {
