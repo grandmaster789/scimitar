@@ -1,7 +1,7 @@
 #include "os.h"
 #include "../util/algorithm.h"
-#include "../util/debugger.h"
 #include "../core/engine.h"
+#include "../core/logger.h"
 #include "../dependencies.h"
 
 namespace {
@@ -12,17 +12,25 @@ namespace {
 	void list_instance_extensions() {
 		auto exts = vk::enumerateInstanceExtensionProperties();
 
-		debugger_log("Available Vulkan instance extensions ({}):", exts.size());
+		std::stringstream sstr;
+
+		sstr << std::format("Available Vulkan instance extensions ({}):", exts.size());
 		for (const auto& prop : exts)
-			debugger_log("\t{}", prop.extensionName);
+			sstr << "\t" << prop.extensionName;
+
+		gLog << sstr.str();
 	}
 
 	void list_instance_layers() {
 		auto layers = vk::enumerateInstanceLayerProperties();
 
-		debugger_log("Available Vulkan instance layers ({}): ", layers.size());
+		std::stringstream sstr;
+
+		sstr << std::format("Available Vulkan instance layers ({}): ", layers.size());
 		for (const auto& layer : layers)
-			debugger_log("\t{}", layer.layerName);
+			sstr << "\t" << layer.layerName;
+
+		gLog << sstr.str();
 	}
 
 	bool check_instance_extensions(const std::vector<const char*>& reqs) {
@@ -34,7 +42,8 @@ namespace {
 			if (!contains_if(available, [req](const vk::ExtensionProperties& props) {
 				return std::string(props.extensionName.data()) == req;
 			})) {
-				std::cout << "Missing required instance extension: " << req << "\n";
+				gLogError << "Missing required instance extension: " << req;
+
 				return false;
 			}
 		}
@@ -51,7 +60,8 @@ namespace {
 			if (!contains_if(available, [req](const vk::LayerProperties& props) {
 				return std::string(props.layerName.data()) == req;
 			})) {
-				std::cout << "Missing required instance layer: " << req << "\n";
+				gLogError << "Missing required instance layer: " << req;
+
 				return false;
 			}
 		}
@@ -104,78 +114,7 @@ namespace scimitar {
 		list_instance_extensions();
 		list_instance_layers();
 
-		{
-			vk::ApplicationInfo ai;
-			ai.setApiVersion        (VK_API_VERSION_1_2);
-			ai.setApplicationVersion(VK_MAKE_VERSION(0, 1, 0));
-			ai.setEngineVersion     (VK_MAKE_VERSION(0, 1, 0));
-			ai.setPApplicationName  ("Scimitar application");
-			ai.setPEngineName       ("Scimitar engine");
-
-			m_RequiredInstanceExtensions = {
-				VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME,
-				VK_KHR_SURFACE_EXTENSION_NAME
-			};
-
-			if constexpr (ePlatform::current == ePlatform::windows) {
-				m_RequiredInstanceExtensions.push_back(VK_KHR_WIN32_SURFACE_EXTENSION_NAME);
-			}
-
-			if constexpr (
-				(ePlatform::current == ePlatform::windows) &&
-				(eBuild   ::current == eBuild   ::debug)
-			) {
-				m_RequiredInstanceExtensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
-				
-				m_RequiredInstanceLayers.push_back("VK_LAYER_KHRONOS_validation");
-				// "VK_LAYER_LUNARG_api_dump"
-			}
-			
-			if constexpr (eBuild::current == eBuild::debug) {
-				m_RequiredDeviceFeatures.robustBufferAccess = VK_TRUE;
-			}
-
-			if (!check_instance_extensions(m_RequiredInstanceExtensions))
-				throw std::runtime_error("Not all required Vulkan instance extensions are available");
-			if (!check_instance_iayers(m_RequiredInstanceLayers))
-				throw std::runtime_error("Not all required Vulkan instance layers are available");
-
-			vk::InstanceCreateInfo ici;
-			ici
-				.setPApplicationInfo      (&ai)
-				.setEnabledExtensionCount (static_cast<uint32_t>(m_RequiredInstanceExtensions.size()))
-				.setPEnabledExtensionNames(m_RequiredInstanceExtensions)
-				.setEnabledLayerCount     (static_cast<uint32_t>(m_RequiredInstanceLayers.size()))
-				.setPEnabledLayerNames    (m_RequiredInstanceLayers);
-
-			m_VkInstance = vk::createInstanceUnique(ici);
-			m_VkLoader   = vk::DispatchLoaderDynamic(m_VkInstance.get(), vkGetInstanceProcAddr);
-		}
-
-		if constexpr (
-			(ePlatform::current == ePlatform::windows) &&
-			(eBuild   ::current == eBuild   ::debug)
-		) {
-			vk::DebugUtilsMessengerCreateInfoEXT info;
-
-			info.setMessageSeverity(
-				vk::DebugUtilsMessageSeverityFlagBitsEXT::eVerbose |
-				//vk::DebugUtilsMessageSeverityFlagBitsEXT::eInfo    | // spammy
-				vk::DebugUtilsMessageSeverityFlagBitsEXT::eWarning |
-				vk::DebugUtilsMessageSeverityFlagBitsEXT::eError
-			);
-
-			info.setMessageType(
-				vk::DebugUtilsMessageTypeFlagBitsEXT::eGeneral     |
-				vk::DebugUtilsMessageTypeFlagBitsEXT::ePerformance |
-				vk::DebugUtilsMessageTypeFlagBitsEXT::eValidation
-			);
-
-			info.setPfnUserCallback(debug_callback);
-			info.setPUserData(this);
-
-			m_VkDebugMessager = m_VkInstance->createDebugUtilsMessengerEXTUnique(info);
-		}
+		init_vulkan();
 
 		// identify all available vulkan devices, provide RenderDevices for all of them
 		/*
@@ -200,6 +139,81 @@ namespace scimitar {
 		return m_RequiredDeviceLimits;
 	}
 
+	void OS::init_vulkan() {
+		{
+			vk::ApplicationInfo ai;
+			ai.setApiVersion(VK_API_VERSION_1_2);
+			ai.setApplicationVersion(VK_MAKE_VERSION(0, 1, 0));
+			ai.setEngineVersion(VK_MAKE_VERSION(0, 1, 0));
+			ai.setPApplicationName("Scimitar application");
+			ai.setPEngineName("Scimitar engine");
+
+			m_RequiredInstanceExtensions = {
+				VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME,
+				VK_KHR_SURFACE_EXTENSION_NAME
+			};
+
+			if constexpr (ePlatform::current == ePlatform::windows) {
+				m_RequiredInstanceExtensions.push_back(VK_KHR_WIN32_SURFACE_EXTENSION_NAME);
+			}
+
+			if constexpr (
+				(ePlatform::current == ePlatform::windows) &&
+				(eBuild::current == eBuild::debug)
+			) {
+				m_RequiredInstanceExtensions.push_back(VK_EXT_DEBUG_UTILS_EXTENSION_NAME);
+
+				m_RequiredInstanceLayers.push_back("VK_LAYER_KHRONOS_validation");
+				// "VK_LAYER_LUNARG_api_dump"
+			}
+
+			if constexpr (eBuild::current == eBuild::debug) {
+				m_RequiredDeviceFeatures.robustBufferAccess = VK_TRUE;
+			}
+
+			if (!check_instance_extensions(m_RequiredInstanceExtensions))
+				throw std::runtime_error("Not all required Vulkan instance extensions are available");
+			if (!check_instance_iayers(m_RequiredInstanceLayers))
+				throw std::runtime_error("Not all required Vulkan instance layers are available");
+
+			vk::InstanceCreateInfo ici;
+			ici
+				.setPApplicationInfo(&ai)
+				.setEnabledExtensionCount(static_cast<uint32_t>(m_RequiredInstanceExtensions.size()))
+				.setPEnabledExtensionNames(m_RequiredInstanceExtensions)
+				.setEnabledLayerCount(static_cast<uint32_t>(m_RequiredInstanceLayers.size()))
+				.setPEnabledLayerNames(m_RequiredInstanceLayers);
+
+			m_VkInstance = vk::createInstanceUnique(ici);
+			m_VkLoader = vk::DispatchLoaderDynamic(m_VkInstance.get(), vkGetInstanceProcAddr);
+		}
+
+		if constexpr (
+			(ePlatform::current == ePlatform::windows) &&
+			(eBuild::current == eBuild::debug)
+			) {
+			vk::DebugUtilsMessengerCreateInfoEXT info;
+
+			info.setMessageSeverity(
+				vk::DebugUtilsMessageSeverityFlagBitsEXT::eVerbose |
+				//vk::DebugUtilsMessageSeverityFlagBitsEXT::eInfo    | // spammy
+				vk::DebugUtilsMessageSeverityFlagBitsEXT::eWarning |
+				vk::DebugUtilsMessageSeverityFlagBitsEXT::eError
+			);
+
+			info.setMessageType(
+				vk::DebugUtilsMessageTypeFlagBitsEXT::eGeneral |
+				vk::DebugUtilsMessageTypeFlagBitsEXT::ePerformance |
+				vk::DebugUtilsMessageTypeFlagBitsEXT::eValidation
+			);
+
+			info.setPfnUserCallback(debug_callback);
+			info.setPUserData(this);
+
+			m_VkDebugMessager = m_VkInstance->createDebugUtilsMessengerEXTUnique(info);
+		}
+	}
+
 	VkBool32 OS::debug_callback(
 		VkDebugUtilsMessageSeverityFlagBitsEXT      severity,
 		VkDebugUtilsMessageTypeFlagsEXT             type,
@@ -211,13 +225,13 @@ namespace scimitar {
 
 		switch (severity) {
 		case VK_DEBUG_UTILS_MESSAGE_SEVERITY_VERBOSE_BIT_EXT:
-			// debugger_log("Vulkan: {}", pCallbackData->pMessage);
+			//gLog << "\tvk: " << data->pMessage;
 			break;
 
 		case VK_DEBUG_UTILS_MESSAGE_SEVERITY_INFO_BIT_EXT: 
 		case VK_DEBUG_UTILS_MESSAGE_SEVERITY_WARNING_BIT_EXT: 
 		case VK_DEBUG_UTILS_MESSAGE_SEVERITY_ERROR_BIT_EXT: 
-			debugger_log("Vulkan: {}", data->pMessage);
+			gLog << "\tvk: " << data->pMessage;
 			break;
 
 		default: 

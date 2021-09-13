@@ -23,7 +23,9 @@ namespace scimitar {
 		const vk::PhysicalDeviceFeatures& get_vk_required_physical_features() const noexcept;
 		const vk::PhysicalDeviceLimits&   get_vk_required_physical_limits()   const noexcept;
 
-	private:	
+	private:
+		void init_vulkan();
+
 		static VkBool32 debug_callback(
 			      VkDebugUtilsMessageSeverityFlagBitsEXT severity,
 			      VkDebugUtilsMessageTypeFlagsEXT        type,

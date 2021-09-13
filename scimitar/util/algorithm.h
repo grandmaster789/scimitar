@@ -96,6 +96,17 @@ namespace scimitar::util {
 		typename tFunctor // fn(size_t) -> T
 	>
 	constexpr std::array<T, N> generate_array(tFunctor fn);
+
+	template <typename T, size_t N>
+	constexpr uint32_t count_of(T(&)[N]);
+
+	// given a set of options, select one if it is available with any give number of fallbacks
+	// (yields nullopt if none of the preferences was in the available set)
+	template <typename C, typename...tValues>
+	std::optional<typename C::value_type> prefer(
+		const C&          available_options,
+		const tValues&... preferred
+	);
 }
 
 #include "algorithm.inl"

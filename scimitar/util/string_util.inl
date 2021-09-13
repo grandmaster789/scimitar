@@ -1,8 +1,18 @@
 #pragma once
 
 #include "string_util.h"
+#include <sstream>
 
 namespace scimitar::util {
+	template <typename... tArgs>
+	[[nodiscard]] std::string stringify(tArgs... args) {
+		std::stringstream result;
+
+		(result << ... << std::forward<tArgs>(args));
+
+		return result.str();
+	}
+
 	inline constexpr size_t string_size(c_Size auto str) noexcept {
 		return size(str);
 	}

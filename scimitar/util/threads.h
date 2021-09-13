@@ -24,8 +24,8 @@ namespace scimitar::util {
 	bool              is_main_thread           ();
 	void              run_from_main_thread     (std::function<void()> fn);
 	
-	void              set_current_thread_name(std::string_view name);
-	std::string       get_current_thread_name(ThreadID id);
+	void              set_current_thread_name  (std::string_view name);
+	std::string       get_current_thread_name  ();
 	ThreadID          get_current_threadID     () noexcept;
 	
 	size_t            get_current_cpuID        () noexcept;

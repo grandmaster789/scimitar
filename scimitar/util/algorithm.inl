@@ -177,4 +177,57 @@ namespace scimitar::util {
 
 		return result;
 	}
+
+	template <typename T, size_t N>
+	constexpr uint32_t count_of(T(&)[N]) {
+		static_assert(N < std::numeric_limits<uint32_t>::max());
+		return static_cast<uint32_t>(N);
+	}
+
+	namespace detail {
+		template <typename C, typename T, typename... Vs>
+		std::optional<typename C::value_type> prefer_impl(
+			const C&     haystack, 
+			const T&     current_needle, 
+			const Vs&... remaining_needles
+		) {
+			static_assert(std::is_same_v<typename C::value_type, T>);
+
+			if (contains(haystack, current_needle))
+				return current_needle;
+
+			if constexpr (sizeof...(Vs) > 0) {
+				return prefer_impl(
+					haystack, 
+					remaining_needles...
+				);
+			}
+
+#if SCIMITAR_COMPILER == SCIMITAR_COMPILER_MSVC
+	#pragma warning(push)
+	#pragma warning(disable: 4702) // unreachable code ?
+#endif
+
+			return std::nullopt;
+
+#if SCIMITAR_COMPILER == SCIMITAR_COMPILER_MSVC
+	#pragma warning(pop)
+#endif
+		}
+	}
+	
+	template <typename C, typename...tValues>
+	std::optional<typename C::value_type> prefer(
+		const C& available_options,
+		const tValues&... preferred
+	) {
+		if constexpr (sizeof...(tValues) == 0) {
+			return std::nullopt;
+		}
+
+		return detail::prefer_impl(
+			available_options, 
+			preferred...
+		);
+	}
 }

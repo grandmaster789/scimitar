@@ -4,6 +4,7 @@
 #include <iosfwd>
 #include <sstream>
 #include <string>
+#include "../../util/threads.h"
 
 namespace scimitar::core {
 	class Logger;
@@ -23,7 +24,9 @@ namespace scimitar::core::logger {
 			Logger*            owner,
 			eLogCategory       category,
 			const std::string& source_file,
-			unsigned int       source_line
+			unsigned int       source_line,
+			util::ThreadID     thread_id,
+			const std::string& thread_name
 		);
 
 		// no-copy, move-default (moving is questionable though)
@@ -43,9 +46,11 @@ namespace scimitar::core::logger {
 		LogMessage& operator << (std::ostream& (*fn)(std::ostream&));
 
 		struct MetaInfo {
-			eLogCategory m_Category;
-			std::string  m_SourceFile;
-			unsigned int m_SourceLine;
+			eLogCategory   m_Category;
+			std::string    m_SourceFile;
+			unsigned int   m_SourceLine;
+			util::ThreadID m_ThreadID;
+			std::string    m_ThreadName;
 		};
 
 	private:

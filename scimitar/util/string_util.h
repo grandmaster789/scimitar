@@ -27,6 +27,20 @@ namespace scimitar::util {
 	[[nodiscard]] std::string to_upper           (std::string_view sv) noexcept;
 	[[nodiscard]] std::string normalize_linefeeds(std::string_view sv) noexcept; // get rid of all line feeds except for \n
 
+	[[nodiscard]] std::string concat(const std::vector<std::string>&      parts, std::string_view separator = "");
+	[[nodiscard]] std::string concat(const std::vector<const char*>&      parts, std::string_view separator = "");
+	[[nodiscard]] std::string concat(const std::vector<std::string_view>& parts, std::string_view separator = "");
+
+	template <typename... tArgs>
+	[[nodiscard]] std::string stringify(tArgs... args);
+
+	// insert a separator character every 'column_width' characters
+	std::string columnize(
+		const std::string& source_string,
+		const int          column_width = 80,
+		const char         separator = '\n'
+	);
+
 	inline constexpr size_t string_size(c_Size auto str) noexcept;
 	inline constexpr size_t string_size(      auto str) noexcept;
 

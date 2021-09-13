@@ -7,13 +7,17 @@ namespace scimitar::core::logger {
 		Logger*            owner,
 		eLogCategory       category,
 		const std::string& source_file,
-		unsigned int       source_line
+		unsigned int       source_line,
+		util::ThreadID     thread_id,
+		const std::string& thread_name
 	):
 		m_Owner(owner),
 		m_MetaInfo{
 			category,
 			source_file,
-			source_line
+			source_line,
+			thread_id,
+			thread_name
 		}
 	{
 	}
