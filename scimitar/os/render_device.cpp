@@ -6,9 +6,12 @@ namespace scimitar::os {
 	RenderDevice::RenderDevice(vk::PhysicalDevice physical) :
 		m_Physical(physical)
 	{
-		// https://www.khronos.org/registry/vulkan/specs/1.2-extensions/html/vkspec.html#devsandqueues-physical-device-enumeration
-		// https://www.khronos.org/registry/vulkan/specs/1.2-extensions/html/vkspec.html#VkPhysicalDeviceProperties2
-		m_PhysicalProperties = physical.getProperties();
+		// TODO: determine the full capability set of the physical device
+		// so the getProperties2 yields a sizable linked list of different device properties that require
+		// a fair amount of dynamic inspection to fully parse... currently I'm not *that* concerned with
+		// determining the full capability set of the hardware so I'll leave it as a todo
+		m_PhysicalProperties       = physical.getProperties2().properties;
+		m_PhysicalMemoryProperties = physical.getMemoryProperties();
 
 		std::stringstream sstr;
 
@@ -19,11 +22,11 @@ namespace scimitar::os {
 		int drv_major = VK_VERSION_MAJOR(m_PhysicalProperties.driverVersion);
 		int drv_minor = VK_VERSION_MINOR(m_PhysicalProperties.driverVersion);
 		int drv_patch = VK_VERSION_PATCH(m_PhysicalProperties.driverVersion);
-
+				
 		sstr
 			<< "RenderDevice: " << m_PhysicalProperties.deviceName << "\n"
-			<< "\tAPI:    " << api_major << "." << api_minor << "." << api_patch << "\n"
-			<< "\tDriver: " << drv_major << "." << drv_minor << "." << drv_patch;
+			<< "Vulkan API:   " << api_major << "." << api_minor << "." << api_patch << "\n"
+			<< "Driver: "       << " v" << drv_major << "." << drv_minor << "." << drv_patch << "\n";
 
 		gLog << sstr.str();
 

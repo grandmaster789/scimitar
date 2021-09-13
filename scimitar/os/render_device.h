@@ -10,10 +10,11 @@ namespace scimitar::os {
 		vk::Device getHandle(); // the logical one
 
 	private:
-		vk::PhysicalDevice           m_Physical;
-		vk::PhysicalDeviceProperties m_PhysicalProperties;
+		vk::PhysicalDevice                 m_Physical;
+		vk::PhysicalDeviceProperties       m_PhysicalProperties;
+		vk::PhysicalDeviceMemoryProperties m_PhysicalMemoryProperties;
 
-		vk::UniqueDevice             m_Logical;
+		vk::UniqueDevice                   m_Logical;
 
 	};
 }
