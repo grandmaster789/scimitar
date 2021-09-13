@@ -23,7 +23,7 @@ namespace test {
 
 #if SCIMITAR_PLATFORM == SCIMITAR_PLATFORM_WINDOWS
 			// MSVC will issue warnings about non-secure C functions - we suppress it here because the suggestion
-			// to use the windows-specific fopen_s variant is a no-go
+			// to use the windows-specific fopen_s variant is a no-go (because of cross-platform considerations)
 			// https://docs.microsoft.com/en-us/cpp/error-messages/compiler-warnings/compiler-warning-level-3-c4996?view=msvc-160
 
 			#pragma warning(push)
