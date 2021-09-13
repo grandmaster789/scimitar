@@ -33,6 +33,11 @@ namespace scimitar::util {
 		);
 	}
 
+	template <typename T>
+	uint32_t vec_count(const std::vector<T>& v) {
+		return static_cast<uint32_t>(v.size());
+	}
+
 	template <typename C, typename E>
 	bool contains(const C& c, const E& x) {
 		return std::find(
@@ -202,17 +207,8 @@ namespace scimitar::util {
 					remaining_needles...
 				);
 			}
-
-#if SCIMITAR_COMPILER == SCIMITAR_COMPILER_MSVC
-	#pragma warning(push)
-	#pragma warning(disable: 4702) // unreachable code ?
-#endif
-
-			return std::nullopt;
-
-#if SCIMITAR_COMPILER == SCIMITAR_COMPILER_MSVC
-	#pragma warning(pop)
-#endif
+			else // if this 'else' is missing, MSVC will yield 'unreachable code' warnings?
+				return std::nullopt;
 		}
 	}
 	

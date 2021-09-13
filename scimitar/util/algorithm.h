@@ -30,6 +30,10 @@ namespace scimitar::util {
 		size_t num_elements
 	);
 
+	// reduced typing for a lot of vulkan arguments...
+	template <typename T>
+	uint32_t vec_count(const std::vector<T>& v);
+
 	template <typename tContainer, typename tElement>
 	bool contains(
 		const tContainer& c, 

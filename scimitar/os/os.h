@@ -4,14 +4,16 @@
 #include <vector>
 
 #include "../dependencies.h"
-
 #include "../core/system.h"
+#include "render_device.h"
 
 namespace scimitar {
 	class OS :
 		public core::System
 	{
 	public:
+		using RenderDevice = os::RenderDevice;
+
 		OS();
 
 		void init()     override; 
@@ -42,5 +44,7 @@ namespace scimitar {
 		std::vector<const char*>   m_RequiredInstanceLayers;
 		vk::PhysicalDeviceFeatures m_RequiredDeviceFeatures;
 		vk::PhysicalDeviceLimits   m_RequiredDeviceLimits;
+		
+		std::vector<RenderDevice> m_RenderDevices;
 	};
 }

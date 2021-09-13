@@ -14,9 +14,9 @@ namespace {
 
 		std::stringstream sstr;
 
-		sstr << std::format("Available Vulkan instance extensions ({}):", exts.size());
+		sstr << std::format("Available Vulkan instance extensions ({}):\n", exts.size());
 		for (const auto& prop : exts)
-			sstr << "\t" << prop.extensionName;
+			sstr << "\t" << prop.extensionName << "\n";
 
 		gLog << sstr.str();
 	}
@@ -26,9 +26,9 @@ namespace {
 
 		std::stringstream sstr;
 
-		sstr << std::format("Available Vulkan instance layers ({}): ", layers.size());
+		sstr << std::format("Available Vulkan instance layers ({}):\n", layers.size());
 		for (const auto& layer : layers)
-			sstr << "\t" << layer.layerName;
+			sstr << "\t" << layer.layerName << "\n";
 
 		gLog << sstr.str();
 	}
@@ -117,10 +117,11 @@ namespace scimitar {
 		init_vulkan();
 
 		// identify all available vulkan devices, provide RenderDevices for all of them
-		/*
 		for (auto physical : m_VkInstance->enumeratePhysicalDevices())
-			m_RenderDevices.push_back(std::make_unique<RenderDevice>(this, physical));
-		*/
+			m_RenderDevices.push_back(RenderDevice(physical));
+
+		if (m_RenderDevices.empty())
+			throw std::runtime_error("No render devices available");
 	}
 
 	void OS::shutdown() {
@@ -140,13 +141,15 @@ namespace scimitar {
 	}
 
 	void OS::init_vulkan() {
+		using util::vec_count;
+
 		{
 			vk::ApplicationInfo ai;
-			ai.setApiVersion(VK_API_VERSION_1_2);
-			ai.setApplicationVersion(VK_MAKE_VERSION(0, 1, 0));
-			ai.setEngineVersion(VK_MAKE_VERSION(0, 1, 0));
-			ai.setPApplicationName("Scimitar application");
-			ai.setPEngineName("Scimitar engine");
+			ai.setApiVersion        (VK_API_VERSION_1_2);
+			ai.setApplicationVersion(VK_MAKE_VERSION(0, 1, 0)); // perhaps hook this somehow into the Application subsystem?
+			ai.setEngineVersion     (VK_MAKE_VERSION(0, 1, 0));
+			ai.setPApplicationName  ("Scimitar application");
+			ai.setPEngineName       ("Scimitar engine");
 
 			m_RequiredInstanceExtensions = {
 				VK_KHR_GET_PHYSICAL_DEVICE_PROPERTIES_2_EXTENSION_NAME,
@@ -178,20 +181,20 @@ namespace scimitar {
 
 			vk::InstanceCreateInfo ici;
 			ici
-				.setPApplicationInfo(&ai)
-				.setEnabledExtensionCount(static_cast<uint32_t>(m_RequiredInstanceExtensions.size()))
+				.setPApplicationInfo      (&ai)
+				.setEnabledExtensionCount (vec_count(m_RequiredInstanceExtensions))
 				.setPEnabledExtensionNames(m_RequiredInstanceExtensions)
-				.setEnabledLayerCount(static_cast<uint32_t>(m_RequiredInstanceLayers.size()))
-				.setPEnabledLayerNames(m_RequiredInstanceLayers);
+				.setEnabledLayerCount     (vec_count(m_RequiredInstanceLayers))
+				.setPEnabledLayerNames    (m_RequiredInstanceLayers);
 
 			m_VkInstance = vk::createInstanceUnique(ici);
-			m_VkLoader = vk::DispatchLoaderDynamic(m_VkInstance.get(), vkGetInstanceProcAddr);
+			m_VkLoader   = vk::DispatchLoaderDynamic(m_VkInstance.get(), vkGetInstanceProcAddr);
 		}
 
 		if constexpr (
 			(ePlatform::current == ePlatform::windows) &&
 			(eBuild::current == eBuild::debug)
-			) {
+		) {
 			vk::DebugUtilsMessengerCreateInfoEXT info;
 
 			info.setMessageSeverity(

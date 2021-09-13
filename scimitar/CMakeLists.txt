@@ -83,7 +83,7 @@ add_library(${SCIMITAR_LIB} STATIC
 	"util/codec/codepage_1252.h" 
 	"util/codec/utf.h" 
 	"util/codec/utf.cpp"
-   "util/filesystem.h" "util/filesystem.cpp")
+   "util/filesystem.h" "util/filesystem.cpp" "os/render_device.h" "os/render_device.cpp")
 
 # vcpkg dependencies
 find_package(nlohmann_json CONFIG REQUIRED)
