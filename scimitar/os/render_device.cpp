@@ -24,6 +24,7 @@ namespace scimitar::os {
 		int drv_patch = VK_VERSION_PATCH(m_PhysicalProperties.driverVersion);
 				
 		sstr
+			<< "\n"
 			<< "RenderDevice: " << m_PhysicalProperties.deviceName << "\n"
 			<< "Vulkan API:   " << api_major << "." << api_minor << "." << api_patch << "\n"
 			<< "Driver: "       << " v" << drv_major << "." << drv_minor << "." << drv_patch << "\n";
