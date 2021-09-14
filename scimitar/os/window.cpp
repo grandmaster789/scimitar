@@ -29,11 +29,6 @@ namespace {
 
 		auto proc_result = win->win_proc(window, msg, wp, lp);
 
-		if (msg == WM_DESTROY) {
-			// remove the associated object before calling DefWindowProc
-			SetWindowLongPtr(window, GWLP_USERDATA, NULL);
-		}
-
 		if (proc_result == -1)
 			return DefWindowProc(window, msg, wp, lp);
 
@@ -255,7 +250,11 @@ namespace scimitar::os {
 
 		switch (msg) {
 		case WM_DESTROY:
+			// remove the associated object pointer to prevent further cascades
+			SetWindowLongPtr(window, GWLP_USERDATA, NULL);
+
 			m_Owner->close(this);
+
 			break;
 
 		case WM_CREATE: {

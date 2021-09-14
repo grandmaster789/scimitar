@@ -25,7 +25,7 @@ namespace scimitar {
 			}
 
 			if (m_Windows.empty())
-				return;
+				m_Engine->stop(); // if the last window closes, we're done
 		}
 	}
 }
