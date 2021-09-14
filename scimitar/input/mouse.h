@@ -97,7 +97,7 @@ namespace scimitar {
             };
 
         private:
-            Input* m_Manager;
+            Input* m_Manager = nullptr;
 
             std::array<bool, 3> m_Buttons = {};
 

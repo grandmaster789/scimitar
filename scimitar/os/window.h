@@ -60,9 +60,7 @@ namespace scimitar::os {
 		uint32_t getWidth()  const;
 		uint32_t getHeight() const;
 
-		vk::SurfaceKHR getSurface() const;
-
-
+		//vk::SurfaceKHR getSurface() const;
 
 	private:
 		OS*    m_Owner        = nullptr;
@@ -76,6 +74,6 @@ namespace scimitar::os {
 		std::unique_ptr<Keyboard> m_Keyboard;
 		std::unique_ptr<Mouse>    m_Mouse;
 
-		vk::UniqueSurfaceKHR m_Surface;
+		//vk::UniqueSurfaceKHR m_Surface;
 	};
 }

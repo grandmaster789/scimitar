@@ -13,7 +13,8 @@ namespace scimitar::input {
     }
 
     Mouse::~Mouse() {
-        m_Manager->unregister_device(this);
+        if (m_Manager)
+            m_Manager->unregister_device(this);
     }
 
     bool Mouse::is_down(eButton button) const {

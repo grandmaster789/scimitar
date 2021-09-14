@@ -1,25 +1,43 @@
 #include "window.h"
-#include <cassert>
-#include "../core/logger.h"
 #include "os.h"
+
+#include "../core/logger.h"
+#include "../core/engine.h"
+#include "../input/input.h"
+#include "../dependencies.h"
+
+#include <cassert>
 
 /*
 *	Very much win32 api code in here
 */
 
 namespace {
+	
 	LRESULT CALLBACK defer_win_proc(
 		HWND   window,
 		UINT   msg,
 		WPARAM wp,
 		LPARAM lp
 	) {
-		LONG_PTR ptr = GetWindowLongPtr(window, 0); // fetch associated userdata
+		auto userdata = GetWindowLongPtr(window, GWLP_USERDATA);
 
-		if (ptr == NULL)
+		if (userdata == 0)
 			return DefWindowProc(window, msg, wp, lp);
-		else
-			return std::bit_cast<scimitar::os::Window*>(ptr)->win_proc(window, msg, wp, lp);
+
+		auto* win = (scimitar::os::Window*)userdata;
+
+		auto proc_result = win->win_proc(window, msg, wp, lp);
+
+		if (msg == WM_DESTROY) {
+			// remove the associated object before calling DefWindowProc
+			SetWindowLongPtr(window, GWLP_USERDATA, NULL);
+		}
+
+		if (proc_result == -1)
+			return DefWindowProc(window, msg, wp, lp);
+
+		return proc_result;
 	}
 
 	struct ScimitarWindowClass {
@@ -35,10 +53,10 @@ namespace {
 	private:
 		ScimitarWindowClass() {
 			m_WindowClass.cbSize        = sizeof(m_WindowClass);
-			m_WindowClass.style         = CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS;
+			m_WindowClass.style         = CS_DBLCLKS; // enable double-click window message
 			m_WindowClass.lpfnWndProc   = defer_win_proc;
-			m_WindowClass.cbClsExtra    = 0;             // extra bytes for the WindowClass
-			m_WindowClass.cbClsExtra    = sizeof(void*); // extra bytes for the window itself (we're going to put a pointer to the associated object there)
+			m_WindowClass.cbClsExtra    = 0; // extra bytes for the WindowClass
+			m_WindowClass.cbClsExtra    = 0; // extra bytes for the window itself
 			m_WindowClass.hInstance     = GetModuleHandle(NULL);
 			m_WindowClass.hIcon         = LoadIcon(NULL, IDI_APPLICATION);
 			m_WindowClass.hIconSm       = LoadIcon(NULL, IDI_WINLOGO);
@@ -105,6 +123,9 @@ namespace scimitar::os {
 	):
 		m_Owner(owner)
 	{
+		// Set Dpi awareness before actually opening any window
+		SetThreadDpiAwarenessContext(DPI_AWARENESS_CONTEXT_PER_MONITOR_AWARE_V2);
+
 		auto display_monitors = enumerate_display_devices();
 
 		if (display_monitors.empty())
@@ -117,72 +138,76 @@ namespace scimitar::os {
 
 		auto device_mode = get_current_displaymode(display_monitors[display_device_idx]);
 
-		RECT rect;
-
-		DWORD style   = 0; // https://docs.microsoft.com/en-us/windows/desktop/winmsg/window-styles
-		DWORD exStyle = 0; // https://docs.microsoft.com/en-us/windows/desktop/winmsg/extended-window-styles
-
-		int device_x = device_mode.dmPosition.x; // device mode position is a virtual desktop location
-		int device_y = device_mode.dmPosition.y;
-		int device_w = device_mode.dmPelsWidth;
-		int device_h = device_mode.dmPelsHeight;
-
-		if (windowed) {
-			// center the rect
-			rect.left   = device_x  + (device_w - width)  / 2;
-			rect.top    = device_y  + (device_h - height) / 2;
-			rect.right  = rect.left + width;
-			rect.bottom = rect.top  + height;
-
-			style   = WS_OVERLAPPEDWINDOW | WS_CLIPCHILDREN | WS_CLIPSIBLINGS;
-			exStyle = WS_EX_APPWINDOW | WS_EX_WINDOWEDGE;
-		}
-		else {
-			// fill the entire device space
-			// (NOTE this is a 'Fullscreen Windowed' approach, no finessing with the video mode here
-			rect.left   = device_x;
-			rect.right  = device_x + device_w;
-			rect.top    = device_y;
-			rect.bottom = device_y + device_h;
-
-			style   = WS_POPUP | WS_CLIPCHILDREN | WS_CLIPSIBLINGS;
-			exStyle = WS_EX_APPWINDOW;
-		}
-
-		AdjustWindowRectEx(&rect, style, FALSE, exStyle);
-
 		const auto& wc = ScimitarWindowClass::instance().get();
 
+		DWORD style   = 0;
+		DWORD exStyle = 0;
+
+		if (windowed) {
+			style =
+				WS_CLIPSIBLINGS |
+				WS_CLIPCHILDREN |
+				WS_SYSMENU |
+				WS_MINIMIZEBOX;
+
+			exStyle = WS_EX_APPWINDOW;
+		}
+		else {
+			style =
+				WS_CLIPSIBLINGS |
+				WS_CLIPCHILDREN |
+				WS_POPUP;
+
+			exStyle = 
+				WS_EX_APPWINDOW | 
+				WS_EX_TOPMOST;
+		}
+
+		// https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-createwindowexa
 		m_NativeHandle = CreateWindowEx(
 			exStyle,
 			wc.lpszClassName,
 			title.c_str(),
 			style,
-			rect.left,
-			rect.top,
-			rect.right - rect.left, // width
-			rect.bottom - rect.top, // height
+			CW_USEDEFAULT,			// x
+			CW_USEDEFAULT,			// y
+			CW_USEDEFAULT,          // width
+			CW_USEDEFAULT,          // height
 			nullptr,                // parent window
 			nullptr,                // menu
 			GetModuleHandle(NULL),  // hInstance
-			nullptr                 // LPVOID lpParam (additional parameters)
+			this                    // LPVOID lpParam (additional parameters)
 		);
 
 		if (m_NativeHandle) {
-			SetWindowLongPtr(m_NativeHandle, 0, (LONG_PTR)this);
-
-			if (!s_MainWindow)
-				s_MainWindow = m_NativeHandle;
-
-			GetClientRect(m_NativeHandle, &rect);
-			m_Width  = rect.right  - rect.left;
-			m_Height = rect.bottom - rect.top;
+			// associate this object with the native window
+			SetWindowLongPtr(m_NativeHandle, GWLP_USERDATA, (LONG_PTR)this);
 
 			ShowWindow(m_NativeHandle, SW_SHOW);
-			SetForegroundWindow(m_NativeHandle);
 		}
 		else
 			throw std::runtime_error("Failed to create window");
+
+		auto* input_system = core::Engine::instance().get<Input>();
+		
+		m_Keyboard = std::make_unique<Keyboard>(input_system);
+		m_Mouse    = std::make_unique<Mouse>(input_system);
+
+		// create the vulkan surface
+		/* 
+		{
+			vk::Win32SurfaceCreateInfoKHR info;
+
+			info
+				.setHinstance(GetModuleHandle(NULL))
+				.setHwnd(m_NativeHandle);
+
+			m_Surface = m_Owner->get_vk_instance().createWin32SurfaceKHRUnique(info);
+
+			if (!m_Surface)
+				throw std::runtime_error("Failed to create vulkan surface");
+		}
+		*/
 	}
 
 	Window::~Window() {
@@ -214,9 +239,11 @@ namespace scimitar::os {
 		return m_Height;
 	}
 
+	/*
 	vk::SurfaceKHR Window::getSurface() const {
 		return m_Surface.get();
 	}
+	*/
 
 	LRESULT CALLBACK Window::win_proc(
 		HWND   window,
@@ -228,15 +255,28 @@ namespace scimitar::os {
 
 		switch (msg) {
 		case WM_DESTROY:
-			if (is_main_window())
-				PostQuitMessage(0);
+			m_Owner->close(this);
 			break;
 
-		case WM_CLOSE:
-			m_Owner->close(this);
+		case WM_CREATE: {
+				auto* info = (CREATESTRUCT*)lp;
+				RECT rect;
+
+				rect.left   = info->x;
+				rect.top    = info->y;
+				rect.right  = info->x + info->cx;
+				rect.bottom = info->y + info->cy;
+
+				// should update layout here
+			}
+			break;
+
+		case WM_PAINT: {
+
+			}
 			break;
 		}
 
-		return DefWindowProc(window, msg, wp, lp);
+		return -1;
 	}
 }

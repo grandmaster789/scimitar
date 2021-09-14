@@ -1,5 +1,6 @@
 #include "input.h"
 #include "../util/algorithm.h"
+#include "../core/logger.h"
 
 namespace scimitar {
     Input::Input(): 
@@ -22,7 +23,7 @@ namespace scimitar {
         if (!util::contains(m_Keyboards, kbd))
             m_Keyboards.push_back(kbd);
         else
-            std::cout << "Duplicate keyboard registration, discarding...\n";
+            gLog << "Duplicate keyboard registration, discarding...\n";
     }
 
     void Input::unregister_device(Keyboard* kbd) {
@@ -31,14 +32,14 @@ namespace scimitar {
         if (it != std::end(m_Keyboards))
             m_Keyboards.erase(it);
         else
-            std::cout << "Cannot unregister unlisted keyboard, ignoring...";
+            gLog << "Cannot unregister unlisted keyboard, ignoring...";
     }
 
     void Input::register_device(Mouse* m) {
         if (!util::contains(m_Mice, m))
             m_Mice.push_back(m);
         else
-            std::cout << "Duplicate mouse registration, discarding...";
+            gLog << "Duplicate mouse registration, discarding...";
     }
 
     void Input::unregister_device(Mouse* m) {
@@ -47,7 +48,7 @@ namespace scimitar {
         if (it != std::end(m_Mice))
             m_Mice.erase(it);
         else
-            std::cout << "Cannot unregister unlisted mouse, ignoring...";
+            gLog << "Cannot unregister unlisted mouse, ignoring...";
     }
 
     const std::vector<Input::Keyboard*>& Input::get_keyboards() const {

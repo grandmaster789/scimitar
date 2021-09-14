@@ -72,6 +72,18 @@ namespace scimitar::util {
 		tIteratorB needles_last
 	) noexcept; // returns haystack_last if none was found
 
+	template <typename tContainer, typename tElement>
+	bool erase(
+		tContainer&     c, 
+		const tElement& value
+	); // returns true if the value was erased (false if it wasn't found)
+
+	template <typename tContainer, typename tPredicate>
+	bool erase_if(
+		tContainer& vec,
+		tPredicate  pred
+	); // returns true if something was erased
+
 	template <typename tContainer>
 	void sort(tContainer& c);
 

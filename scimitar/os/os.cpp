@@ -106,7 +106,8 @@ void vkDestroyDebugUtilsMessengerEXT(
 namespace scimitar {
 	OS::OS():
 		System("OS")
-	{	
+	{
+		add_dependency("Input");
 	}
 
 	void OS::init() {
@@ -154,7 +155,7 @@ namespace scimitar {
 	}
 
 	void OS::close(Window* w) {
-		std::erase_if(
+		util::erase_if(
 			m_Windows, 
 			[=](const auto& ptr) {
 				return ptr.get() == w;

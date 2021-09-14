@@ -12,7 +12,8 @@ namespace scimitar::input {
     }
 
     Keyboard::~Keyboard() {
-        m_Manager->unregister_device(this);
+        if (m_Manager)
+            m_Manager->unregister_device(this);
     }
 
     bool Keyboard::is_down(eKey key) const {

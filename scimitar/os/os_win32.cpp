@@ -15,6 +15,8 @@ namespace scimitar {
 				0,        // msg filter max
 				PM_REMOVE // remove message from queue, if any
 			)) {
+				// if anyone posted a WM_QUIT message, quit the application
+				// (i.e. PostMessage(0, WM_QUIT, 0, 0))
 				if (msg.message == WM_QUIT)
 					m_Engine->stop();
 

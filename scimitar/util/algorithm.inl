@@ -117,6 +117,44 @@ namespace scimitar::util {
 		);
 	}
 
+	template <typename tContainer, typename tElement>
+	bool erase(
+		tContainer&     c,
+		const tElement& value
+	) {
+		auto it = std::remove(
+			std::begin(c),
+			std::end(c),
+			value
+		);
+
+		if (it == std::end(c))
+			return false;
+		else
+			c.erase(it, std::end(c));
+
+		return true;
+	}
+
+	template <typename tContainer, typename tPredicate>
+	bool erase_if(
+		tContainer& c,
+		tPredicate  pred
+	) {
+		auto it = std::remove_if(
+			std::begin(c),
+			std::end(c),
+			std::forward<tPredicate>(pred)
+		);
+
+		if (it == std::end(c))
+			return false;
+		else
+			c.erase(it, std::end(c));
+
+		return true;
+	}
+
 	template <typename C>
 	void sort(C& c) {
 		std::sort(
