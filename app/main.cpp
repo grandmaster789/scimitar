@@ -18,13 +18,13 @@ public:
 	}
 
 	void init() override {
-		m_Counter = 1000;
 	}
 
 	void update() override {
-		//--m_Counter;
+		using namespace scimitar;
+		using eKey = input::Keyboard::eKey;
 
-		if (!m_Counter)
+		if (m_Engine->get<Input>()->get_keyboard()->is_down(eKey::escape))
 			m_Engine->stop();
 	}
 

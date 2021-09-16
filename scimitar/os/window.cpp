@@ -5,6 +5,7 @@
 #include "../core/engine.h"
 #include "../input/input.h"
 #include "../dependencies.h"
+#include "../util/flat_map.h"
 
 #include <cassert>
 
@@ -13,7 +14,126 @@
 */
 
 namespace {
-	
+	scimitar::util::FlatMap<WPARAM, scimitar::input::Keyboard::eKey> g_KeyMapping;
+
+	void populate_keymapping() {
+		using eKey = scimitar::input::Keyboard::eKey;
+
+		// VK_ macros (virtual key codes) can be found in <winuser.h>
+		// https://docs.microsoft.com/en-us/windows/desktop/inputdev/virtual-key-codes
+
+		// letters * VK_A - VK_Z are the same as ASCII 'A' - 'Z' (0x41 - 0x5A)
+		g_KeyMapping.assign('A', eKey::a);
+		g_KeyMapping.assign('B', eKey::b);
+		g_KeyMapping.assign('C', eKey::c);
+		g_KeyMapping.assign('D', eKey::d);
+
+		g_KeyMapping.assign('E', eKey::e);
+		g_KeyMapping.assign('F', eKey::f);
+		g_KeyMapping.assign('G', eKey::g);
+		g_KeyMapping.assign('H', eKey::h);
+
+		g_KeyMapping.assign('I', eKey::i);
+		g_KeyMapping.assign('J', eKey::j);
+		g_KeyMapping.assign('K', eKey::k);
+		g_KeyMapping.assign('L', eKey::l);
+
+		g_KeyMapping.assign('M', eKey::m);
+		g_KeyMapping.assign('N', eKey::n);
+		g_KeyMapping.assign('O', eKey::o);
+		g_KeyMapping.assign('P', eKey::p);
+
+		g_KeyMapping.assign('Q', eKey::q);
+		g_KeyMapping.assign('R', eKey::r);
+		g_KeyMapping.assign('S', eKey::s);
+		g_KeyMapping.assign('T', eKey::t);
+
+		g_KeyMapping.assign('U', eKey::u);
+		g_KeyMapping.assign('V', eKey::v);
+		g_KeyMapping.assign('W', eKey::w);
+		g_KeyMapping.assign('X', eKey::x);
+
+		g_KeyMapping.assign('Y', eKey::y);
+		g_KeyMapping.assign('Z', eKey::z);
+
+		// numbers *.assign(_9 are the same as ASCII '0' - '9' (0x30 - 0x39)
+		g_KeyMapping.assign('1', eKey::_1);
+		g_KeyMapping.assign('2', eKey::_2);
+		g_KeyMapping.assign('3', eKey::_3);
+		g_KeyMapping.assign('4', eKey::_4);
+
+		g_KeyMapping.assign('5', eKey::_5);
+		g_KeyMapping.assign('6', eKey::_6);
+		g_KeyMapping.assign('7', eKey::_7);
+		g_KeyMapping.assign('8', eKey::_8);
+
+		g_KeyMapping.assign('9', eKey::_9);
+		g_KeyMapping.assign('0', eKey::_0);
+
+		// function keys
+		g_KeyMapping.assign(VK_F1, eKey::f1);
+		g_KeyMapping.assign(VK_F2, eKey::f2);
+		g_KeyMapping.assign(VK_F3, eKey::f3);
+		g_KeyMapping.assign(VK_F4, eKey::f4);
+
+		g_KeyMapping.assign(VK_F5, eKey::f5);
+		g_KeyMapping.assign(VK_F6, eKey::f6);
+		g_KeyMapping.assign(VK_F7, eKey::f7);
+		g_KeyMapping.assign(VK_F8, eKey::f8);
+
+		g_KeyMapping.assign(VK_F9, eKey::f9);
+		g_KeyMapping.assign(VK_F10, eKey::f10);
+		g_KeyMapping.assign(VK_F11, eKey::f11);
+		g_KeyMapping.assign(VK_F12, eKey::f12);
+
+		// symbol keys (assuming US standard keyboard)
+		g_KeyMapping.assign(VK_OEM_1, eKey::semicolon);
+		g_KeyMapping.assign(VK_OEM_2, eKey::questionmark);
+		g_KeyMapping.assign(VK_OEM_3, eKey::tilde);
+		g_KeyMapping.assign(VK_OEM_4, eKey::brace_open);
+		g_KeyMapping.assign(VK_OEM_5, eKey::vertical_pipe);
+		g_KeyMapping.assign(VK_OEM_6, eKey::brace_close);
+		g_KeyMapping.assign(VK_OEM_7, eKey::double_quote);
+		g_KeyMapping.assign(VK_OEM_8, eKey::oem_8);
+
+		g_KeyMapping.assign(VK_OEM_PLUS,   eKey::plus);
+		g_KeyMapping.assign(VK_OEM_MINUS,  eKey::minus);
+		g_KeyMapping.assign(VK_OEM_COMMA,  eKey::comma);
+		g_KeyMapping.assign(VK_OEM_PERIOD, eKey::period);
+					
+		// navigational keys
+		g_KeyMapping.assign(VK_UP,    eKey::up);
+		g_KeyMapping.assign(VK_DOWN,  eKey::down);
+		g_KeyMapping.assign(VK_LEFT,  eKey::left);
+		g_KeyMapping.assign(VK_RIGHT, eKey::right); 
+
+		g_KeyMapping.assign(VK_PRIOR, eKey::pg_up);
+		g_KeyMapping.assign(VK_NEXT,  eKey::pg_down);
+		g_KeyMapping.assign(VK_HOME,  eKey::home);
+		g_KeyMapping.assign(VK_END,   eKey::end);
+
+		g_KeyMapping.assign(VK_INSERT, eKey::ins);
+		g_KeyMapping.assign(VK_DELETE, eKey::del);
+
+		// everything else
+		g_KeyMapping.assign(VK_CONTROL, eKey::ctrl);
+		g_KeyMapping.assign(VK_MENU,    eKey::alt);
+		g_KeyMapping.assign(VK_SHIFT,   eKey::shift);
+		g_KeyMapping.assign(VK_SPACE,   eKey::space);
+
+		g_KeyMapping.assign(VK_TAB,    eKey::tab);
+		g_KeyMapping.assign(VK_RETURN, eKey::enter);
+		g_KeyMapping.assign(VK_ESCAPE, eKey::escape);
+		g_KeyMapping.assign(VK_BACK,   eKey::backspace);
+	}
+
+	auto find_key_code(WPARAM wp) {
+		if (auto* result = g_KeyMapping[wp])
+			return *result;
+		else
+			return scimitar::input::Keyboard::eKey::undefined;
+	}
+
 	LRESULT CALLBACK defer_win_proc(
 		HWND   window,
 		UINT   msg,
@@ -131,6 +251,9 @@ namespace scimitar::os {
 			display_device_idx = 0;
 		}
 
+		if (g_KeyMapping.is_empty())
+			populate_keymapping();
+
 		auto device_mode = get_current_displaymode(display_monitors[display_device_idx]);
 
 		const auto& wc = ScimitarWindowClass::instance().get();
@@ -183,14 +306,44 @@ namespace scimitar::os {
 		else
 			throw std::runtime_error("Failed to create window");
 
-		auto* input_system = core::Engine::instance().get<Input>();
-		
-		m_Keyboard = std::make_unique<Keyboard>(input_system);
-		m_Mouse    = std::make_unique<Mouse>(input_system);
+		// extend drawable area over titlebar+border
+		MARGINS margins{ 0, 0, 0, 1 };
+		DwmExtendFrameIntoClientArea(m_NativeHandle, &margins);
+
+		// determine DPI
+		{
+			auto value = GetDpiForWindow(m_NativeHandle);
+			if (value == 0)
+				throw std::runtime_error("Failed to get window DPI");
+
+			m_Dpi = static_cast<float>(value);
+		}
+
+		// https://docs.microsoft.com/en-us/windows/win32/api/winuser/nf-winuser-setwindowpos
+		SetWindowPos(
+			m_NativeHandle,
+			nullptr,				// insertAfter
+			0,                      // X (left)
+			0,                      // Y (top)
+			0,                      // cx (width in pixels)
+			0,                      // cy (height in pixels)
+			SWP_NOMOVE        |     // retain the current position (ignore x/y params)
+			SWP_NOSIZE        |		// retain the current size     (ignore cx/cy params)
+			SWP_NOZORDER      |		// retain the current Z-order  (ignore insertAfter param)
+			SWP_NOOWNERZORDER |		// does not change the owner window's position in the Z order
+			SWP_FRAMECHANGED        // send WM_NCCALCSIZE even if the actual size isn't changed
+		);
+
+		// setup virtual keyboard/mouse for this window
+		{
+			auto* input_system = core::Engine::instance().get<Input>();
+
+			m_Keyboard = std::make_unique<Keyboard>(input_system);
+			m_Mouse    = std::make_unique<Mouse>(input_system);
+		}
 
 		// create the vulkan surface
-		/* 
-		{
+		/* {
 			vk::Win32SurfaceCreateInfoKHR info;
 
 			info
@@ -201,13 +354,7 @@ namespace scimitar::os {
 
 			if (!m_Surface)
 				throw std::runtime_error("Failed to create vulkan surface");
-		}
-		*/
-	}
-
-	Window::~Window() {
-		if (m_NativeHandle)
-			DestroyWindow(m_NativeHandle);
+		}*/
 	}
 
 	Window::Handle Window::get_native_handle() const {
@@ -249,32 +396,52 @@ namespace scimitar::os {
 		assert(window == m_NativeHandle);
 
 		switch (msg) {
-		case WM_DESTROY:
-			// remove the associated object pointer to prevent further cascades
-			SetWindowLongPtr(window, GWLP_USERDATA, NULL);
+		case WM_DESTROY: {
+				// remove the associated object pointer to prevent further cascades
+				SetWindowLongPtr(window, GWLP_USERDATA, NULL);
 
-			m_Owner->close(this);
-
-			break;
+				m_Owner->close(this);
+			} break;
 
 		case WM_CREATE: {
 				auto* info = (CREATESTRUCT*)lp;
 				RECT rect;
 
-				rect.left   = info->x;
-				rect.top    = info->y;
-				rect.right  = info->x + info->cx;
+				rect.left = info->x;
+				rect.top = info->y;
+				rect.right = info->x + info->cx;
 				rect.bottom = info->y + info->cy;
 
 				// should update layout here
-			}
-			break;
+			} break;
 
-		case WM_PAINT: {
+			// https://docs.microsoft.com/en-us/windows/win32/winmsg/wm-nccalcsize
+		case WM_NCCALCSIZE: {
+				if (wp == TRUE)
+					return 0; // old client area is preserved and is aligned with upper-left corner of the new client area
+			} break;
 
-			}
-			break;
+		case WM_DPICHANGED: {
+				m_Dpi = static_cast<float>(LOWORD(wp));
+
+				gLog << "Dpi changed to " << m_Dpi;
+
+				m_ShouldLayout = true;
+			} break;
+
+		case WM_KEYDOWN:
+		case WM_SYSKEYDOWN: {
+				auto key = find_key_code(wp);
+				m_Keyboard->set_state(key, true);
+			} break;
+
+		case WM_KEYUP:
+		case WM_SYSKEYUP: {
+				auto key = find_key_code(wp);
+				m_Keyboard->set_state(key, false);
+			} break;
 		}
+
 
 		return -1;
 	}

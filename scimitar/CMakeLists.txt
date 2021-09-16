@@ -48,6 +48,12 @@ add_library(${SCIMITAR_LIB} STATIC
 	"os/os.cpp"
 	$<${SCIMITAR_WINDOWS}:${CMAKE_CURRENT_SOURCE_DIR}/os/os_win32.cpp>
 	"os/vma_impl.cpp"
+	"os/render_device.h" 
+	"os/render_device.cpp" 
+	"os/gpu_queue.h"
+	"os/gpu_queue.cpp" 
+	"os/window.h" 
+	"os/window.cpp"
 
 	"input/input.cpp" 
 	"input/input.h" 
@@ -68,6 +74,7 @@ add_library(${SCIMITAR_LIB} STATIC
 	"util/debugger.h"
 	"util/debugger.cpp"
 	"util/endian.h" 
+	
 	"util/function.h" 
 	"util/literals.h" 
 	"util/memory.h"
@@ -83,7 +90,9 @@ add_library(${SCIMITAR_LIB} STATIC
 	"util/codec/codepage_1252.h" 
 	"util/codec/utf.h" 
 	"util/codec/utf.cpp"
-   "util/filesystem.h" "util/filesystem.cpp" "os/render_device.h" "os/render_device.cpp" "os/gpu_queue.h" "os/gpu_queue.cpp" "os/window.h" "os/window.cpp")
+	"util/filesystem.h" 
+	"util/filesystem.cpp"
+  "util/flat_map.h")
 
 # vcpkg dependencies
 find_package(nlohmann_json CONFIG REQUIRED)

@@ -33,6 +33,12 @@ namespace scimitar::util {
 		std::is_nothrow_move_assignable_v<T>&&
 		std::is_nothrow_move_assignable_v<D>
 	) {
+		// check for self-assignment 
+		if (&ur == this) {
+			[[unlikely]] 
+			return *this;
+		}
+
 		reset();
 
 		m_Handle  = std::move(ur.m_Handle);

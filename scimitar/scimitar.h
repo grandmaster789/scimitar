@@ -8,6 +8,10 @@
 #include "core/engine.h"
 #include "core/system.h"
 
+#include "input/input.h"
+#include "input/keyboard.h"
+#include "input/mouse.h"
+
 #include "math/helpers.h"
 
 #include "os/os.h"

@@ -13,7 +13,7 @@ add_executable(${UNIT_TEST}
 	"util/test_endian.cpp" 
 	"util/test_biguint.cpp" 
 	"util/test_base_n.cpp"
- )
+  )
 
 find_package(GTest CONFIG REQUIRED)
 

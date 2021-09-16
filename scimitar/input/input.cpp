@@ -1,6 +1,43 @@
 #include "input.h"
 #include "../util/algorithm.h"
 #include "../core/logger.h"
+#include "mouse.h"
+#include "keyboard.h"
+
+namespace scimitar::input {
+    class Aggregator:
+        public MessageHandler<Keyboard::OnKeyPressed>,
+        public MessageHandler<Keyboard::OnKeyReleased>
+    {
+    public:
+        Aggregator(Input* manager) {
+            m_Mouse    = std::make_unique<Mouse>(manager);
+            m_Keyboard = std::make_unique<Keyboard>(manager);
+        }
+
+        void operator()(const Keyboard::OnKeyPressed& kp) {
+            if (kp.kbd != m_Keyboard.get())
+                m_Keyboard->set_state(kp.key, true);
+        }
+
+        void operator()(const Keyboard::OnKeyReleased& kr) {
+            if (kr.kbd != m_Keyboard.get())
+                m_Keyboard->set_state(kr.key, false);
+        }
+
+        const Mouse* get_mouse() const {
+            return m_Mouse.get();
+        }
+
+        const Keyboard* get_keyboard() const {
+            return m_Keyboard.get();
+        }
+
+    private:
+        std::unique_ptr<Mouse>    m_Mouse;
+        std::unique_ptr<Keyboard> m_Keyboard;
+    };
+}
 
 namespace scimitar {
     Input::Input(): 
@@ -10,6 +47,8 @@ namespace scimitar {
 
     void Input::init() {
         System::init();
+
+        m_Aggregator = std::make_unique<input::Aggregator>(this);
     }
 
     void Input::update() {
@@ -17,6 +56,8 @@ namespace scimitar {
 
     void Input::shutdown() {
         System::shutdown();
+
+        m_Aggregator.reset();
     }
 
     void Input::register_device(Keyboard* kbd) {
@@ -57,5 +98,13 @@ namespace scimitar {
 
     const std::vector<Input::Mouse*>& Input::get_mice() const {
         return m_Mice;
+    }
+
+    const Input::Keyboard* Input::get_keyboard() const {
+        return m_Aggregator->get_keyboard();
+    }
+
+    const Input::Mouse* Input::get_mouse() const {
+        return m_Aggregator->get_mouse();        
     }
 }  // namespace scimitar

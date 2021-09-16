@@ -26,7 +26,9 @@ namespace scimitar {
             {
                 left,
                 right,
-                middle
+                middle,
+                x1,
+                x2
             };
 
             Mouse(Input* manager);
@@ -99,7 +101,7 @@ namespace scimitar {
         private:
             Input* m_Manager = nullptr;
 
-            std::array<bool, 3> m_Buttons = {};
+            std::array<bool, 5> m_Buttons = {};
 
             float m_X = 0;
             float m_Y = 0;

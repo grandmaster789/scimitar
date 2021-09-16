@@ -102,8 +102,8 @@ namespace scimitar {
 
             Keyboard             (const Keyboard&) = delete;
             Keyboard& operator = (const Keyboard&) = delete;
-            Keyboard             (Keyboard&&)                 = delete;
-            Keyboard& operator = (Keyboard&&) = delete;
+            Keyboard             (Keyboard&&)      = delete;
+            Keyboard& operator = (Keyboard&&)      = delete;
 
             bool is_down(eKey key) const;
             bool is_up  (eKey key) const;

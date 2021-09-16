@@ -29,8 +29,7 @@ namespace scimitar::core::detail {
 		using LockGuard = std::lock_guard<Mutex>;
 		using Handler   = std::function<void(const T&)>;
 
-		// using basic_string as a variant of <vector>, 
-		// because it has small object optimization
+		// NOTE this would benefit from small object optimizations
 		Mutex m_Mutex;
 		std::vector<Handler> m_Handlers;
 		std::vector<void*>   m_SourcePtrs;

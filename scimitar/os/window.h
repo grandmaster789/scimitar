@@ -40,7 +40,6 @@ namespace scimitar::os {
 			int                display_device_idx, // aka MonitorIndex
 			OS*                owner               // because we need the vkInstance, and to notify 'window close' events
 		);
-		~Window();
 
 		// no-copy, no-move
 		// NOTE we're storing a pointer to this object with the native window, 
@@ -70,6 +69,9 @@ namespace scimitar::os {
 
 		uint32_t m_Width  = 0;
 		uint32_t m_Height = 0;
+		float    m_Dpi    = 0.0f; // horizontal dpi
+
+		bool m_ShouldLayout = false; // when true, the layout will be updated on next update
 
 		std::unique_ptr<Keyboard> m_Keyboard;
 		std::unique_ptr<Mouse>    m_Mouse;

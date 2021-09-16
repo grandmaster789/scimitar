@@ -22,6 +22,8 @@ namespace scimitar::input {
         case eButton::left:   return m_Buttons[0];
         case eButton::middle: return m_Buttons[1];
         case eButton::right:  return m_Buttons[2];
+        case eButton::x1:     return m_Buttons[3];
+        case eButton::x2:     return m_Buttons[4];
         default:
             throw std::runtime_error("Unsupported mouse button");
         }
@@ -32,6 +34,8 @@ namespace scimitar::input {
         case eButton::left:   return !m_Buttons[0];
         case eButton::middle: return !m_Buttons[1];
         case eButton::right:  return !m_Buttons[2];
+        case eButton::x1:     return !m_Buttons[3];
+        case eButton::x2:     return !m_Buttons[4];
         default:
             throw std::runtime_error("Unsupported mouse button");
         }
@@ -48,6 +52,8 @@ namespace scimitar::input {
         case eButton::left:   idx = 0; break;
         case eButton::middle: idx = 1; break;
         case eButton::right:  idx = 2; break;
+        case eButton::x1:     idx = 3; break;
+        case eButton::x2:     idx = 4; break;
         default:
             throw std::runtime_error("Unsupported button");
         }
@@ -98,6 +104,8 @@ namespace scimitar::input {
         case Mouse::eButton::left:   os << "Left";   break;
         case Mouse::eButton::middle: os << "Middle"; break;
         case Mouse::eButton::right:  os << "Right";  break;
+        case Mouse::eButton::x1:     os << "X1";     break;
+        case Mouse::eButton::x2:     os << "X2";     break;
 
         default:
             os << "[unknown]"; 
