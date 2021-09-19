@@ -39,7 +39,7 @@ namespace scimitar::util {
 	}
 
 	template <typename C, typename E>
-	bool contains(const C& c, const E& x) {
+	bool contains(const C& c, const E& x) noexcept {
 		return std::find(
 			std::begin(c), 
 			std::end(c), 

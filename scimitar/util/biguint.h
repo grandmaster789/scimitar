@@ -70,7 +70,7 @@ namespace scimitar::util {
 		static constexpr int m_BitsPerDigit = sizeof(Digit) * 8;
 		static constexpr int m_NumBits      = m_NumDigits * m_BitsPerDigit;
 
-		std::array<Digit, m_NumDigits> m_Digits;
+		std::array<Digit, m_NumDigits> m_Digits = {};
 	};
 
 	using ubig128 = Biguint<uint64_t, 2>;

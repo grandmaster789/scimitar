@@ -5,7 +5,7 @@
 
 namespace scimitar::util {
 	template <typename... tArgs>
-	[[nodiscard]] std::string stringify(tArgs... args) {
+	std::string stringify(tArgs... args) {
 		std::stringstream result;
 
 		(result << ... << std::forward<tArgs>(args));
@@ -22,7 +22,7 @@ namespace scimitar::util {
 	}
 
 	template <typename T, typename... Ts>
-	[[nodiscard]] std::pair<size_t, size_t> find_first_string(
+	std::pair<size_t, size_t> find_first_string(
 		std::string_view haystack,
 		size_t           offset,
 		const T&         needle_head,
@@ -53,7 +53,7 @@ namespace scimitar::util {
 	}
 
 	template <typename... Ts>
-	[[nodiscard]] std::vector<std::string> split(
+	std::vector<std::string> split(
 		std::string_view haystack,
 		const Ts&... needles
 	) noexcept {

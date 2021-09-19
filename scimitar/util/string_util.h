@@ -8,20 +8,20 @@
 #include "concepts.h"
 
 namespace scimitar::util {
-	[[nodiscard]] constexpr bool is_upper        (char c) noexcept; // A-Z
-	[[nodiscard]] constexpr bool is_lower        (char c) noexcept; // a-z
-	[[nodiscard]] constexpr bool is_alpha        (char c) noexcept; // A-Za-z
-	[[nodiscard]] constexpr bool is_digit        (char c) noexcept; // 0-9
-	[[nodiscard]] constexpr bool is_alphanum     (char c) noexcept; // A-Za-z0-9
-	[[nodiscard]] constexpr bool is_linefeed     (char c) noexcept; // \n\r\f\v
-	[[nodiscard]] constexpr bool is_whitespace   (char c) noexcept; // ' '\t\n\r\f\v
-	[[nodiscard]] constexpr bool is_number_begin (char c) noexcept; // 0-9+-
-	[[nodiscard]] constexpr bool is_name_begin   (char c) noexcept; // A-Za-z_$
-	[[nodiscard]] constexpr bool is_name_next    (char c) noexcept; // A-Za-z0-9_$
-	[[nodiscard]] constexpr bool is_quote        (char c) noexcept; // '"`
-	[[nodiscard]] constexpr bool is_open_bracket (char c) noexcept; // ([{
-	[[nodiscard]] constexpr bool is_close_bracket(char c) noexcept; // )]}
-	[[nodiscard]] constexpr bool is_operator     (char c) noexcept; // ~!@#%^&*<>?/,.:;|\+-=
+	constexpr bool is_upper        (char c) noexcept; // A-Z
+	constexpr bool is_lower        (char c) noexcept; // a-z
+	constexpr bool is_alpha        (char c) noexcept; // A-Za-z
+	constexpr bool is_digit        (char c) noexcept; // 0-9
+	constexpr bool is_alphanum     (char c) noexcept; // A-Za-z0-9
+	constexpr bool is_linefeed     (char c) noexcept; // \n\r\f\v
+	constexpr bool is_whitespace   (char c) noexcept; // ' '\t\n\r\f\v
+	constexpr bool is_number_begin (char c) noexcept; // 0-9+-
+	constexpr bool is_name_begin   (char c) noexcept; // A-Za-z_$
+	constexpr bool is_name_next    (char c) noexcept; // A-Za-z0-9_$
+	constexpr bool is_quote        (char c) noexcept; // '"`
+	constexpr bool is_open_bracket (char c) noexcept; // ([{
+	constexpr bool is_close_bracket(char c) noexcept; // )]}
+	constexpr bool is_operator     (char c) noexcept; // ~!@#%^&*<>?/,.:;|\+-=
 
 	[[nodiscard]] std::string to_lower           (std::string_view sv) noexcept;
 	[[nodiscard]] std::string to_upper           (std::string_view sv) noexcept;
@@ -32,7 +32,7 @@ namespace scimitar::util {
 	[[nodiscard]] std::string concat(const std::vector<std::string_view>& parts, std::string_view separator = "");
 
 	template <typename... tArgs>
-	[[nodiscard]] std::string stringify(tArgs... args);
+	std::string stringify(tArgs... args);
 
 	// insert a separator character every 'column_width' characters
 	std::string columnize(
@@ -42,11 +42,11 @@ namespace scimitar::util {
 	);
 
 	inline constexpr size_t string_size(c_Size auto str) noexcept;
-	inline constexpr size_t string_size(      auto str) noexcept;
+	inline constexpr size_t string_size(       auto str) noexcept;
 
 	// search the haystack for all needles, return the first matched range
 	template <typename T, typename... Ts>
-	[[nodiscard]] std::pair<size_t, size_t> find_first_string(
+	std::pair<size_t, size_t> find_first_string(
 		std::string_view haystack,
 		size_t           offset,
 		const T&         needle_head,
@@ -54,7 +54,7 @@ namespace scimitar::util {
 	) noexcept;
 
 	template <typename... Ts>
-	[[nodiscard]] std::vector<std::string> split(
+	std::vector<std::string> split(
 		std::string_view haystack, 
 		const Ts&...     needles
 	) noexcept;

@@ -5,6 +5,8 @@
 #include "../input/keyboard.h"
 #include "../input/mouse.h"
 
+#if SCIMITAR_PLATFORM == SCIMITAR_PLATFORM_WINDOWS
+
 namespace scimitar {
 	class OS;
 }
@@ -17,7 +19,7 @@ namespace scimitar::os {
 
 	class Window {
 	public:
-#if SCIMITAR_PLATFORM == SCIMITAR_PLATFORM_WINDOWS
+
 		using Handle = HWND;
 
 		LRESULT CALLBACK win_proc(
@@ -26,9 +28,7 @@ namespace scimitar::os {
 			WPARAM wp,
 			LPARAM lp
 		);
-#else
-	#error "not sure what this is on other platforms"
-#endif
+
 		using Keyboard = input::Keyboard;
 		using Mouse    = input::Mouse;
 
@@ -79,3 +79,7 @@ namespace scimitar::os {
 		//vk::UniqueSurfaceKHR m_Surface;
 	};
 }
+
+#else
+	#error "not sure what this is on other platforms"
+#endif

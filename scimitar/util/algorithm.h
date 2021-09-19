@@ -38,13 +38,13 @@ namespace scimitar::util {
 	bool contains(
 		const tContainer& c, 
 		const tElement&   x
-	);
+	) noexcept;
 
 	template <typename tContainer, typename tPredicate>
 	bool contains_if(
 		const tContainer& c, 
 		      tPredicate  pred
-	);
+	); 
 
 	template <typename tContainer>
 	bool contains_all_of(
@@ -91,7 +91,10 @@ namespace scimitar::util {
 	void uniquify(tContainer& c); // eliminates duplicate values from a container (also sorts it)
 
 	template <typename T, typename U>
-	bool assign_if_changed(T& old_value, U&& new_value) noexcept; // returns true if the value was changed
+	bool assign_if_changed(
+		T&  old_value, 
+		U&& new_value
+	) noexcept; // returns true if the value was changed
 
 	template <
 		typename tContainerA,
@@ -100,7 +103,7 @@ namespace scimitar::util {
 	>
 	tContainerA transform(
 		const tContainerB& source,
-		tFunctor fn
+		tFunctor           fn		// element_type_A fn(const element_type_B& element)
 	);
 
 	template <typename C, typename V>

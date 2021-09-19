@@ -3,6 +3,7 @@
 #include <mutex>
 #include <vector>
 #include <functional>
+
 #include "../../util/spin_mutex.h"
 
 namespace scimitar::core::detail {

@@ -58,7 +58,10 @@ namespace scimitar::util {
 	}
 
 	template <typename K, typename V>
-	void  FlatMap<K, V>::assign(const K& key, V&& value) {
+	void  FlatMap<K, V>::assign(
+		const K& key, 
+		V&&      value
+	) {
 		auto it = find(m_Keys, key);
 
 		if (it == std::end(m_Keys)) {
@@ -74,7 +77,10 @@ namespace scimitar::util {
 	}
 
 	template <typename K, typename V>
-	[[nodiscard]] bool FlatMap<K, V>::insert(const K& key, const V& value) {
+	[[nodiscard]] bool FlatMap<K, V>::insert(
+		const K& key, 
+		const V& value
+	) {
 		auto it = find(m_Keys, key);
 
 		if (it == std::end(m_Keys)) {
@@ -88,7 +94,10 @@ namespace scimitar::util {
 	}
 
 	template <typename K, typename V>
-	[[nodiscard]] bool FlatMap<K, V>::insert(const K& key, V&& value) {
+	[[nodiscard]] bool FlatMap<K, V>::insert(
+		const K& key, 
+		V&&      value
+	) {
 		auto it = find(m_Keys, key);
 
 		if (it == std::end(m_Keys)) {
@@ -100,7 +109,7 @@ namespace scimitar::util {
 	}
 
 	template <typename K, typename V>
-	bool FlatMap<K, V>::contains(const K& key) const {
+	bool FlatMap<K, V>::contains(const K& key) const noexcept {
 		return util::contains(m_Keys, key);
 	}
 

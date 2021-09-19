@@ -3,7 +3,12 @@
 #include "../core/engine.h"
 #include "../core/logger.h"
 #include "../dependencies.h"
-#include "window.h"
+
+#if SCIMITAR_PLATFORM == SCIMITAR_PLATFORM_WINDOWS
+	#include "window_win32.h"
+#else
+	#error "Not implemented yet"
+#endif
 
 namespace {
 	// we'll dynamically fetch function pointers for these functions (this is the expected usage pattern)
